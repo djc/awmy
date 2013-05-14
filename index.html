@@ -168,19 +168,10 @@
     	
       }
       
-      function showInfo(url) {
-        
-        var bits = parseURL(url).path.split('/');
-        bits.shift();
+      function getDates(bits) {
+		
         var dbits = bits[0].split('-');
         var tbits = bits[1].split(':');
-        
-        if (bits.length > 2) {
-          document.querySelector('p#title span.val').innerHTML = decodeURIComponent(bits[2]);
-          document.querySelector('p#title').style.display = 'block';
-          document.title = decodeURIComponent(bits[2]) + ' - Are we meeting yet?';
-        }
-        
         var d = new Date();
         d.setUTCFullYear(dbits[0]);
         d.setUTCMonth(dbits[1] - 1);
@@ -188,7 +179,23 @@
         d.setUTCHours(tbits[0]);
         d.setUTCMinutes(tbits[1]);
         d.setUTCSeconds(0);
+        return [d];
         
+      }
+      
+      function showInfo(url) {
+        
+        var bits = parseURL(url).path.split('/');
+        bits.shift();
+        var dates = getDates(bits);
+        
+        if (bits.length > 2) {
+          document.querySelector('p#title span.val').innerHTML = decodeURIComponent(bits[2]);
+          document.querySelector('p#title').style.display = 'block';
+          document.title = decodeURIComponent(bits[2]) + ' - Are we meeting yet?';
+        }
+        
+        d = dates[0];
         document.querySelector('p#UTC span.val').innerHTML = format(d, 0);
         document.querySelector('p#local span.val').innerHTML = format(d, -d.getTimezoneOffset());
         
