@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Are we meeting yet?</title>
+    <meta charset="utf-8">
+    <style>
+      body {
+        text-align: center;
+        font-family: "Lucida Grande", "Segoe UI", "Roboto", "Helvetica", sans-serif;
+        text-rendering: optimizelegibility;
+        font-size: 2em;
+        font-weight: bold;
+      }
+      div#wrap {
+        overflow: auto;
+        margin: 150px auto;
+        text-align: left;
+        width: 850px;
+      }
+      p {
+        margin: 30px;
+      }
+      span.label {
+        width: 120px;
+        display: block;
+        float: left;
+        color: #999;
+      }
+    </style>
+  </head>
+  <body>
+    
+    <div id="wrap">
+      <p id="title" style="display: none;">
+        <span class="label">Title</span>
+        <span class="val"></span>
+      </p>
+      <p id="UTC">
+        <span class="label">UTC</span>
+        <span class="val"></span>
+      </p>
+      <p id="local">
+        <span class="label">Local</span>
+        <span class="val"></span>
+      </p>
+      <p id="delta">
+        <span class="label">Left</span>
+        <span class="val"></span>
+      </p>
+    </div>
+    
+    <script>
+      
+      function parseURL(url) {
+        
+        var a =  document.createElement('a');
+        a.href = url;
+        return {
+          source: url,
+          protocol: a.protocol.replace(':',''),
+          host: a.hostname,
+          port: a.port,
+          query: a.search,
+          params: (function(){
+            var ret = {}, s = {};
+            var seg = a.search.replace(/^\?/,'').split('&');
+            for (var i = 0; i < seg.length; i++) {
+              if (!seg[i]) { continue; }
+              s = seg[i].split('=');
+              ret[s[0]] = s[1];
+            }
+            return ret;
+          })(),
+          file: (a.pathname.match(/\/([^\/?#]+)$/i) || [,''])[1],
+          hash: a.hash.replace('#', ''),
+          path: a.pathname.replace(/^([^\/])/, '/$1'),
+          relative: (a.href.match(/tps ? : \/\/[^\/]+(.+)/) || [, ''])[1],
+          segments: a.pathname.replace(/^\//, '').split('/')
+        };
+        
+        
+      }
+      
+      function pad(x) {
+        if (x >= 0) {
+          return x < 10 ? '0' + x : x.toString();
+        } else {
+          return x < -9 ? x : '-0' + Math.abs(x);
+        }
+      }
+
+      var scales = {
+        'year': 365 * 24 * 60 * 60,   
+        'month': 30 * 24 * 60 * 60,
+        'week': 7 * 24 * 60 * 60,
+        'day': 24 * 60 * 60,
+        'hour': 60 * 60,
+        'minute': 60,
+        'second': 1
+      };
+  
+      function relTime(x, y) {
+        
+        var delta = Math.floor((y.getTime() - x.getTime()) / 1000);
+        if (delta < 0) {
+          return 'None';
+        }
+        
+        for (unit in scales) {
+          var s = scales[unit];
+          var n = delta / s;
+          if ((unit == 'hour') && (n < 12)) {
+            var h = Math.floor(n);
+            var m = Math.floor(n % 1 * 60);
+            var s = Math.floor(n % (1 / 60) * 3600);
+            var str = h + ':' + pad(m) + ':' + pad(s);
+            return str + ' from now';
+          }
+          if ((n >= 2) || (s == 1)) {
+          	var str = Math.floor(n) + ' ' + unit + (n > 1 ? 's' : '');
+          	return str + ' from now';
+          }
+        }
+        
+      }
+      
+      function refresh(d) {
+        var relString = relTime(new Date(), d);
+        document.querySelector('p#delta span.val').innerHTML = relString;
+      }
+      
+      var DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      var MONTHS = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      ];
+      
+      function format(d, offset) {
+        
+        d = new Date(d.getTime() + offset * 60 * 1000);
+	    var wd = d.getUTCDay();
+    	var dn = d.getUTCDate();
+    	var m = d.getUTCMonth();
+    	var y = d.getUTCFullYear();
+    	var H = d.getUTCHours();
+    	var M = d.getUTCMinutes();
+    	var S = d.getUTCSeconds();
+    	
+    	if (dn == 1) {
+    	  var suffix = 'st';
+    	} else if (dn == 2) {
+    	  suffix = 'nd';
+    	} else if (dn == 3) {
+    	  suffix = 'rd';
+    	} else {
+    	  suffix = 'th';
+    	}
+    	
+    	var ds = DAYS[wd] + ', ' + dn + suffix + ' of ' + MONTHS[m] + ' ' + y;
+    	var ts = ' at ' + pad(H) + ':' + pad(M) + ':' + pad(S);
+    	
+    	if (offset) {
+    	  var delta = pad(offset / 60) + ':' + pad(offset % 60);
+    	  ts = ts + ' [' + (offset > 0 ? '+' : '') + delta + ']';
+    	}
+    	
+    	return ds + ts;
+    	
+      }
+      
+      function showInfo(url) {
+        
+        var bits = parseURL(url).path.split('/');
+        bits.shift();
+        var dbits = bits[0].split('-');
+        var tbits = bits[1].split(':');
+        
+        if (bits.length > 2) {
+          document.querySelector('p#title span.val').innerHTML = decodeURIComponent(bits[2]);
+          document.querySelector('p#title').style.display = 'block';
+          document.title = decodeURIComponent(bits[2]) + ' - Are we meeting yet?';
+        }
+        
+        var d = new Date();
+        d.setUTCFullYear(dbits[0]);
+        d.setUTCMonth(dbits[1] - 1);
+        d.setUTCDate(dbits[2]);
+        d.setUTCHours(tbits[0]);
+        d.setUTCMinutes(tbits[1]);
+        d.setUTCSeconds(0);
+        
+        document.querySelector('p#UTC span.val').innerHTML = format(d, 0);
+        document.querySelector('p#local span.val').innerHTML = format(d, -d.getTimezoneOffset());
+        
+        refresh(d);
+        window.setInterval(refresh, 100, d);
+        
+      }
+      
+      showInfo(document.location);
+      
+    </script>
+  </body>
+</html>
