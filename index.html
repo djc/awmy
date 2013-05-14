@@ -168,18 +168,52 @@
     	
       }
       
+      function digit(s, i) {
+        var c = s.charCodeAt(0);
+        return (c > 47) && (c < 58);
+      }
+      
+      function capitalize(s) {
+        return s.substr(0, 1).toUpperCase() + s.substr(1);
+      }
+      
       function getDates(bits) {
-		
-        var dbits = bits[0].split('-');
+        
         var tbits = bits[1].split(':');
-        var d = new Date();
-        d.setUTCFullYear(dbits[0]);
-        d.setUTCMonth(dbits[1] - 1);
-        d.setUTCDate(dbits[2]);
-        d.setUTCHours(tbits[0]);
-        d.setUTCMinutes(tbits[1]);
-        d.setUTCSeconds(0);
-        return [d];
+        if (digit(bits[0], 0)) {
+          
+          var dbits = bits[0].split('-');
+          var d = new Date();
+          d.setUTCFullYear(dbits[0]);
+          d.setUTCMonth(dbits[1] - 1);
+          d.setUTCDate(dbits[2]);
+          d.setUTCHours(tbits[0]);
+          d.setUTCMinutes(tbits[1]);
+          d.setUTCSeconds(0);
+          return [d];
+          
+        }
+        
+        var now = new Date(Date.now());
+        now.setUTCSeconds(0);
+        
+        if (bits[0].charAt(0) == 'W') {
+          
+          var day = bits[0].substr(1);
+          var idx = DAYS.indexOf(capitalize(day));
+          
+          var t = pad(now.getUTCHours()) + ':' + pad(now.getUTCMinutes());
+          if ((now.getUTCDay() != idx) || (t >= bits[1])) {
+            var diff = (idx - now.getUTCDay()) % 7;
+            diff = diff <= 0 ? diff + 7 : diff;
+            now = new Date(now.getTime() + diff * 24 * 60 * 60 * 1000);
+          }
+          
+          now.setUTCHours(tbits[0]);
+          now.setUTCMinutes(tbits[1]);
+          return [now];
+          
+        }
         
       }
       
