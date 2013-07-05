@@ -51,6 +51,9 @@
     
     <script>
       
+      var ZONES = {{ zones.zones|json }};
+      var RULES = {{ zones.rules|json }};
+      
       function parseURL(url) {
         
         var a =  document.createElement('a');
