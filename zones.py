@@ -55,9 +55,11 @@ def parse(fn):
 		words = WS_SPLIT.split(ln)
 		if words[0] == 'Zone':
 			assert words[1] not in zones, words[1]
-			zone = zones[words[1]] = []
+			zone = []
 			zone.append(zoneline(words[2:]))
-
+			if '/' in words[1]:
+				zones[words[1]] = zone
+		
 		elif words[0] == '':
 			assert zone is not None
 			zone.append(zoneline(words[1:]))
