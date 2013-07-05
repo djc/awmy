@@ -171,7 +171,7 @@
     	
       }
       
-      function digit(s, i) {
+      function digit(s) {
         var c = s.charCodeAt(0);
         return (c > 47) && (c < 58);
       }
@@ -180,43 +180,41 @@
         return s.substr(0, 1).toUpperCase() + s.substr(1);
       }
       
-      function getDates(bits) {
+      function procLiteral(bits) {
+        
+        var dbits = bits[0].split('-');
+        var d = new Date();
+        d.setUTCFullYear(dbits[0]);
+        d.setUTCMonth(dbits[1] - 1);
+        d.setUTCDate(dbits[2]);
         
         var tbits = bits[1].split(':');
-        if (digit(bits[0], 0)) {
-          
-          var dbits = bits[0].split('-');
-          var d = new Date();
-          d.setUTCFullYear(dbits[0]);
-          d.setUTCMonth(dbits[1] - 1);
-          d.setUTCDate(dbits[2]);
-          d.setUTCHours(tbits[0]);
-          d.setUTCMinutes(tbits[1]);
-          d.setUTCSeconds(0);
-          return [d];
-          
-        }
+        d.setUTCHours(tbits[0]);
+        d.setUTCMinutes(tbits[1]);
+        d.setUTCSeconds(0);
+        
+        return [d];
+        
+      }
+      
+      function procWeekly(bits) {
+        
+        var day = bits[0].substr(1);
+        var idx = DAYS.indexOf(capitalize(day));
         
         var now = new Date(Date.now());
         now.setUTCSeconds(0);
-        
-        if (bits[0].charAt(0) == 'W') {
-          
-          var day = bits[0].substr(1);
-          var idx = DAYS.indexOf(capitalize(day));
-          
-          var t = pad(now.getUTCHours()) + ':' + pad(now.getUTCMinutes());
-          if ((now.getUTCDay() != idx) || (t >= bits[1])) {
-            var diff = (idx - now.getUTCDay()) % 7;
-            diff = diff <= 0 ? diff + 7 : diff;
-            now = new Date(now.getTime() + diff * 24 * 60 * 60 * 1000);
-          }
-          
-          now.setUTCHours(tbits[0]);
-          now.setUTCMinutes(tbits[1]);
-          return [now];
-          
+        var t = pad(now.getUTCHours()) + ':' + pad(now.getUTCMinutes());
+        if ((now.getUTCDay() != idx) || (t >= bits[1])) {
+          var diff = (idx - now.getUTCDay()) % 7;
+          diff = diff <= 0 ? diff + 7 : diff;
+          now = new Date(now.getTime() + diff * 24 * 60 * 60 * 1000);
         }
+        
+        var tbits = bits[1].split(':');
+        now.setUTCHours(tbits[0]);
+        now.setUTCMinutes(tbits[1]);
+        return [now];
         
       }
       
@@ -224,7 +222,11 @@
         
         var bits = parseURL(url).path.split('/');
         bits.shift();
-        var dates = getDates(bits);
+        if (digit(bits[0])) {
+          dates = procLiteral(bits);
+        } else if (bits[0].charAt(0) == 'W' && bits[0].length == 4 && bits[0].charAt(0) != 'Wake') {
+          dates = procWeekly(bits);
+        }
         
         if (bits.length > 2) {
           document.querySelector('p#title span.val').innerHTML = decodeURIComponent(bits[2]);
