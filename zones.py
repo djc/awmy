@@ -33,7 +33,7 @@ def offset(s):
     
 	dir, s = (-1, s[1:]) if s[0] == '-' else (1, s)
 	words = [int(n) for n in s.split(':')]
-	assert 2 <= len(words) < 4, words
+	assert 1 <= len(words) < 4, words
 	words = words + [0] * (3 - len(words))
 	
 	assert 0 <= words[0] < 24, words
@@ -66,6 +66,7 @@ def parse(fn):
 			
 		elif words[0] == 'Rule':
 			zone = None
+			words[8] = offset(words[8])
 			rule = rules.setdefault(words[1], [])
 			rule.append(words[2:])
 			
