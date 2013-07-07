@@ -35,6 +35,10 @@
         <span class="label">Title</span>
         <span class="val"></span>
       </p>
+      <p id="ref" style="display: none;">
+        <span class="label">Set</span>
+        <span class="val"></span>
+      </p>
       <p id="UTC">
         <span class="label">UTC</span>
         <span class="val"></span>
@@ -225,7 +229,7 @@
         LOCAL[local.toLowerCase()] = key;
       }
       
-      function zoneRelative(zone, d) {
+      function zoneOffset(zone, d) {
         
         if (zone == 'UTC') {
           return d;
@@ -356,8 +360,8 @@
           
         }
         
-        return new Date(d.getTime() - dstoff * 1000);
-      
+        return zoneoff + dstoff;
+        
       }
       
       function oldWeek(x) {
@@ -397,15 +401,21 @@
           
         }
         
-        d = zoneRelative(zone, d);
         if (title != 'undefined') {
           document.querySelector('p#title span.val').innerHTML = title;
           document.querySelector('p#title').style.display = 'block';
           document.title = title + ' - Are we meeting yet?';
         }
         
+        var offset = zoneOffset(zone, d);
+        d = new Date(d.getTime() - offset * 1000);
         document.querySelector('p#UTC span.val').innerHTML = format(d, 0);
         document.querySelector('p#local span.val').innerHTML = format(d, -d.getTimezoneOffset());
+        
+        if (zone != 'UTC') {
+          document.querySelector('p#ref span.val').innerHTML = format(d, offset / 60);
+          document.querySelector('p#ref').style.display = 'block';
+        }
         
         refresh(d);
         window.setInterval(refresh, 100, d);
