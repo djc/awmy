@@ -222,16 +222,19 @@
         
         var bits = parseURL(url).path.split('/');
         bits.shift();
+
         if (digit(bits[0])) {
           dates = procLiteral(bits);
+          var title = decodeURIComponent(bits[2]);
         } else if (bits[0].charAt(0) == 'W' && bits[0].length == 4 && bits[0].charAt(0) != 'Wake') {
           dates = procWeekly(bits);
+          var title = decodeURIComponent(bits[2]);
         }
         
         if (bits.length > 2) {
-          document.querySelector('p#title span.val').innerHTML = decodeURIComponent(bits[2]);
+          document.querySelector('p#title span.val').innerHTML = title;
           document.querySelector('p#title').style.display = 'block';
-          document.title = decodeURIComponent(bits[2]) + ' - Are we meeting yet?';
+          document.title = title + ' - Are we meeting yet?';
         }
         
         d = dates[0];
