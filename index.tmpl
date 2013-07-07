@@ -193,7 +193,7 @@
         d.setUTCMinutes(tbits[1]);
         d.setUTCSeconds(0);
         
-        return [d];
+        return d;
         
       }
       
@@ -214,30 +214,196 @@
         var tbits = bits[1].split(':');
         now.setUTCHours(tbits[0]);
         now.setUTCMinutes(tbits[1]);
-        return [now];
+        return now;
         
+      }
+      
+      var PARTS = ["Europe", "Australia", "Africa", "Asia", "Antarctica", "Indian", "Atlantic", "Pacific", "America"];
+      var LOCAL = {};
+      for (var key in ZONES) {
+        var local = key.split('/')[1];
+        LOCAL[local.toLowerCase()] = key;
+      }
+      
+      function zoneRelative(zone, d) {
+        
+        if (zone == 'UTC') {
+          return d;
+        }
+        
+        if (ZONES[zone].length > 1) {
+          alert('This code has not been tested! (zone-multi)');
+        }
+        
+        var active = ZONES[zone][ZONES[zone].length - 1];
+        var zoneoff = active.o;
+        console.log('ZONE-OFFSET: ' + zoneoff);
+        d = new Date(d.getTime() - zoneoff * 1000);
+        
+        var changes = [];
+        var y = d.getUTCFullYear();
+        var dstoff = 0;
+        for (var i in RULES[active.r]) {
+          
+          console.log('RULE: ' + JSON.stringify(RULES[active.r][i]));
+          var rule = RULES[active.r][i];
+          if (parseInt(rule[0], 10) > y) {
+            continue;
+          }
+          
+          if (rule[1] != 'max' && parseInt(rule[1], 10) < y) {
+            continue;
+          }
+          
+          if (rule[2] != '-') {
+            alert('This code has not been tested! (year-type)');
+          }
+          
+          // Months handling
+          
+          var rm = MONTHS.indexOf(rule[3]) + 1;
+          var m = d.getUTCMonth() + 1;
+          console.log('COMPARE: ' + m + ' ~ ' + rm);
+          if (m < rm) {
+            continue;
+          } else if (m > rm) {
+            dstoff = rule[6];
+            console.log('DST-OFFSET: ' + dstoff);
+            continue;
+          }
+          
+          // Find the transition day
+          
+          var cur = new Date(Date.UTC(y, m - 1, 1, 0, 0));
+          console.log('FIRST: ' + cur);
+          var wd = cur.getUTCDay();
+          if (rule[4].substr(0, 4) == 'last') {
+            var idx = 40;
+            var target = DAYS.indexOf(rule[4].substr(4));
+          } else {
+            var parts = rule[4].split('>=');
+            idx = parseInt(parts[1], 10);
+            target = DAYS.indexOf(parts[0]);
+          }
+          
+          console.log('IDX: ' + idx + ' TARGET: ' + target);
+          if (wd != target) {
+            cur = new Date(cur.getTime() + 86400 * (7 - wd) * 1000);
+          }
+          
+          console.log('MOVED-DAY: ' + cur);
+          while (cur.getUTCMonth() == m - 1 && cur.getUTCDate() < idx) {
+            cur = new Date(cur.getTime() + 86400 * 7 * 1000);
+            console.log('LOOPED: ' + cur);
+          }
+          
+          if (cur.getUTCMonth() == m) {
+            cur = new Date(cur.getTime() - 86400 * 7 * 1000);
+            console.log('WOUND-BACK: ' + cur);
+          }
+          
+          console.log('TRANS-DAY: ' + cur);
+          console.log('COMPARE-DAYS: ' + d.getUTCDate() + ' ~ ' + cur.getUTCDate());
+          if (d.getUTCDate() < cur.getUTCDate()) {
+            continue;
+          } else if (d.getUTCDate() > cur.getUTCDate()) {
+            dstoff = rule[6];
+            console.log('DST-OFFSET: ' + dstoff);
+            continue;
+          }
+          
+          // Find the transition time
+          
+          var ttime = rule[5];
+          console.log('FLOO: ' + ttime.charAt(ttime.length - 1));
+          if (['w', 'u', 's'].indexOf(ttime.charAt(ttime.length - 1)) >= 0) {
+            var type = ttime.charAt(ttime.length - 1);
+            ttime = ttime.substr(0, ttime.length - 1);
+          } else {
+            type = 'w';
+          }
+          
+          console.log('TIME-TYPE: ' + ttime + ' ' + type);
+          parts = ttime.split(':');
+          var sdiff = parseInt(parts[0], 10) * 3600;
+          if (parts.length > 1) {
+            sdiff += parseInt(parts[1], 10) * 60;
+            if (parts.length > 2) {
+              sdiff += parseInt(parts[2], 10) * 60;
+            }
+          }
+          
+          if (type == 'u') {
+            cur = new Date(cur.getTime() + sdiff * 1000);
+          } else if (type == 's') {
+            cur = new Date(cur.getTime() + (sdiff - zoneoff) * 1000);
+          } else {
+            cur = new Date(cur.getTime() + (sdiff - zoneoff - dstoff) * 1000);
+          }
+          
+          console.log('TRANS-TIME: ' + cur);
+          console.log('MEETING-TIME: ' + d);
+          if (d.getTime() < cur.getTime()) {
+            continue;
+          } else {
+            dstoff = rule[6];
+            console.log('DST-OFFSET: ' + dstoff);
+            continue;
+          }
+          
+          // Still moderately fucked up at transition time
+          // Particularly when transition is forward?
+          
+        }
+        
+        return new Date(d.getTime() - dstoff * 1000);
+      
+      }
+      
+      function oldWeek(x) {
+        return x.charAt(0) == 'W' && x.length == 4 && x[0] != 'Wake';
       }
       
       function showInfo(url) {
         
         var bits = parseURL(url).path.split('/');
         bits.shift();
-
-        if (digit(bits[0])) {
-          dates = procLiteral(bits);
+		
+		if (digit(bits[0])) {
+		  var zone = 'UTC';
+          var d = procLiteral(bits.slice(0, 2));
           var title = decodeURIComponent(bits[2]);
-        } else if (bits[0].charAt(0) == 'W' && bits[0].length == 4 && bits[0].charAt(0) != 'Wake') {
-          dates = procWeekly(bits);
-          var title = decodeURIComponent(bits[2]);
+        } else if (oldWeek(bits[0])) {
+          zone = 'UTC';
+          d = procWeekly(bits.slice(0, 2));
+          title = decodeURIComponent(bits[2]);
+        } else {
+          
+          if (PARTS.indexOf(bits[0]) >= 0) {
+            zone = decodeURIComponent(bits[0]) + '/' + decodeURIComponent(bits[1]).replace(' ', '_');
+            bits.shift();
+          } else {
+            zone = decodeURIComponent(bits[0]).replace(' ', '_');
+            zone = LOCAL[zone.toLowerCase()] || zone;
+          }
+          
+          if (oldWeek(bits[1])) {
+            d = procWeekly(bits.slice(1, 3));
+          } else {
+            d = procLiteral(bits.slice(1, 3));
+          }
+          
+          title = decodeURIComponent(bits[3]);
+          
         }
         
-        if (bits.length > 2) {
+        d = zoneRelative(zone, d);
+        if (title != 'undefined') {
           document.querySelector('p#title span.val').innerHTML = title;
           document.querySelector('p#title').style.display = 'block';
           document.title = title + ' - Are we meeting yet?';
         }
         
-        d = dates[0];
         document.querySelector('p#UTC span.val').innerHTML = format(d, 0);
         document.querySelector('p#local span.val').innerHTML = format(d, -d.getTimezoneOffset());
         
