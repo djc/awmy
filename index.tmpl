@@ -404,6 +404,9 @@
         if (bits[next] == 'w') {
           d = repeatDays(d, 7);
           next += 1;
+        } else if (bits[next] == 'b') {
+          d = repeatDays(d, 14);
+          next += 1;
         }
         
         document.querySelector('p#UTC span.val').innerHTML = format(d, 0);
