@@ -235,6 +235,8 @@
           return 0;
         }
         
+        zone = zone.replace(' ', '_');
+        zone = LOCAL[zone.toLowerCase()] || zone;
         if (ZONES[zone].length > 1) {
           alert('This code has not been tested! (zone-multi)');
         }
@@ -374,45 +376,37 @@
         bits.shift();
 		
 		if (digit(bits[0])) {
-		  var zone = 'UTC';
-          var d = procLiteral(bits.slice(0, 2));
-          var title = decodeURIComponent(bits[2]);
+		  bits = ['UTC'].concat(bits);
         } else if (oldWeek(bits[0])) {
-          zone = 'UTC';
-          d = procWeekly(bits.slice(0, 2));
-          title = decodeURIComponent(bits[2]);
+          bits = ['UTC'].concat(bits);
         } else {
-          
           if (PARTS.indexOf(bits[0]) >= 0) {
-            zone = decodeURIComponent(bits[0]) + '/' + decodeURIComponent(bits[1]).replace(' ', '_');
-            bits.shift();
+            var zone = decodeURIComponent(bits[0]) + '/' + decodeURIComponent(bits[1]).replace(' ', '_');
+            bits = [zone].concat(bits.slice(2));
           } else {
-            zone = decodeURIComponent(bits[0]).replace(' ', '_');
-            zone = LOCAL[zone.toLowerCase()] || zone;
+            bits[0] = decodeURIComponent(bits[0]);
           }
-          
-          if (oldWeek(bits[1])) {
-            d = procWeekly(bits.slice(1, 3));
-          } else {
-            d = procLiteral(bits.slice(1, 3));
-          }
-          
-          title = decodeURIComponent(bits[3]);
-          
         }
         
+        if (oldWeek(bits[1])) {
+          d = procWeekly(bits.slice(1, 3));
+        } else {
+          d = procLiteral(bits.slice(1, 3));
+        }
+        
+        title = decodeURIComponent(bits[3]);
         if (title != 'undefined') {
           document.querySelector('p#title span.val').innerHTML = title;
           document.querySelector('p#title').style.display = 'block';
           document.title = title + ' - Are we meeting yet?';
         }
         
-        var offset = zoneOffset(zone, d);
+        var offset = zoneOffset(bits[0], d);
         d = new Date(d.getTime() - offset * 1000);
         document.querySelector('p#UTC span.val').innerHTML = format(d, 0);
         document.querySelector('p#local span.val').innerHTML = format(d, -d.getTimezoneOffset());
         
-        if (zone != 'UTC') {
+        if (bits[0] != 'UTC') {
           document.querySelector('p#ref span.val').innerHTML = format(d, offset / 60);
           document.querySelector('p#ref').style.display = 'block';
         }
