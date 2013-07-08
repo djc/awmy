@@ -366,6 +366,13 @@
         
       }
       
+      function repeatDays(d, n) {
+        var diff = d.getTime() - (new Date()).getTime();
+        var unit = 86400 * n * 1000;
+        var move = (diff < 0 || diff > 1) ? -Math.floor(diff / unit) : 0;
+        return new Date(d.getTime() + move * unit);
+      }
+      
       function oldWeek(x) {
         return x.charAt(0) == 'W' && x.length == 4 && x[0] != 'Wake';
       }
@@ -392,15 +399,21 @@
         d = procLiteral(bits.slice(1, 3));
         var offset = zoneOffset(bits[0], d);
         d = new Date(d.getTime() - offset * 1000);
+        
+        var next = 3;
+        if (bits[next] == 'w') {
+          d = repeatDays(d, 7);
+          next += 1;
+        }
+        
         document.querySelector('p#UTC span.val').innerHTML = format(d, 0);
         document.querySelector('p#local span.val').innerHTML = format(d, -d.getTimezoneOffset());
-        
         if (bits[0] != 'UTC') {
           document.querySelector('p#ref span.val').innerHTML = format(d, offset / 60);
           document.querySelector('p#ref').style.display = 'block';
         }
         
-        var title = decodeURIComponent(bits[3]);
+        var title = decodeURIComponent(bits[next]);
         if (title != 'undefined') {
           document.querySelector('p#title span.val').innerHTML = title;
           document.querySelector('p#title').style.display = 'block';
