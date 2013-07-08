@@ -389,7 +389,7 @@
           }
         }
         
-        title = decodeURIComponent(bits[3]);
+        var title = decodeURIComponent(bits[3]);
         if (title != 'undefined') {
           document.querySelector('p#title span.val').innerHTML = title;
           document.querySelector('p#title').style.display = 'block';
