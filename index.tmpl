@@ -379,6 +379,7 @@
 		  bits = ['UTC'].concat(bits);
         } else if (oldWeek(bits[0])) {
           bits = ['UTC'].concat(bits);
+          bits[1] = procWeekly(bits.slice(1, 3)).toISOString().substr(0, 10);
         } else {
           if (PARTS.indexOf(bits[0]) >= 0) {
             var zone = decodeURIComponent(bits[0]) + '/' + decodeURIComponent(bits[1]).replace(' ', '_');
@@ -388,12 +389,6 @@
           }
         }
         
-        if (oldWeek(bits[1])) {
-          d = procWeekly(bits.slice(1, 3));
-        } else {
-          d = procLiteral(bits.slice(1, 3));
-        }
-        
         title = decodeURIComponent(bits[3]);
         if (title != 'undefined') {
           document.querySelector('p#title span.val').innerHTML = title;
@@ -401,6 +396,7 @@
           document.title = title + ' - Are we meeting yet?';
         }
         
+        d = procLiteral(bits.slice(1, 3));
         var offset = zoneOffset(bits[0], d);
         d = new Date(d.getTime() - offset * 1000);
         document.querySelector('p#UTC span.val').innerHTML = format(d, 0);
