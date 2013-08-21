@@ -1,12 +1,14 @@
 import json
-import jinja2
 
 if __name__ == '__main__':
 	
-	data = {}
 	with open('pruned.json') as f:
-		data['zones'] = json.load(f)
+		data = json.load(f)
 	
-	env = jinja2.Environment(loader=jinja2.FileSystemLoader('.'))
-	env.filters['json'] = lambda x: json.dumps(x)
-	print env.get_template('index.tmpl').render(**data)
+	with open('index.tmpl') as f:
+		tmpl = f.read()
+	
+	for k, v in data.iteritems():
+		tmpl = tmpl.replace('{{ %s }}' % k, json.dumps(v))
+	
+	print tmpl
