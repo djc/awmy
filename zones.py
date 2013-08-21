@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import sys, os, re, tarfile, simplejson as json
+import sys, os, re, tarfile, json
 
 FILES = {
 	'africa', 'antarctica', 'asia', 'australasia',

@@ -1,5 +1,4 @@
-import simplejson as json
-import os, sys
+import os, sys, json
 
 LITERALS = {'only', 'max'}
 

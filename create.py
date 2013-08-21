@@ -1,4 +1,4 @@
-import simplejson as json
+import json
 import jinja2
 
 if __name__ == '__main__':
