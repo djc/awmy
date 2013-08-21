@@ -13,10 +13,10 @@ Requirements
 How to install
 --------------
 
-Refer to the Makefile for further instructions. The source.json Makefile
-target is currently Gentoo-specific; you can trivially generate source.json
-by passing an explicit path to the tzdata tarball to zones.py.
+Refer to the `Makefile` for further instructions. The `source.json` `Makefile`
+target is currently Gentoo-specific; you can trivially generate `source.json`
+by passing an explicit path to the tzdata tarball to `zones.py`.
 
 The JavaScript code currently assumes installation at a host root and all
-requests for that host are redirected to index.html. On Apache, this can be
-achieved by employing the FallbackResource directive.
+requests for that host are redirected to `index.html`. On Apache, this can be
+achieved by employing the `FallbackResource` directive.
