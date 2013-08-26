@@ -404,6 +404,7 @@
         
         var bits = parseURL(url).path.split('/');
         bits.shift();
+        var restrict = null;
 		
 		if (newWeek(bits[0])) {
 		  bits = ['UTC'].concat(bits);
@@ -412,6 +413,7 @@
         } else if (oldWeek(bits[0])) {
           bits = ['UTC'].concat(bits);
           bits[1] = procWeekly(bits.slice(1, 3)).toISOString().substr(0, 10);
+          restrict = 'w';
         } else {
           if (PARTS.indexOf(bits[0]) >= 0) {
             var zone = decodeURIComponent(bits[0]) + '/' + decodeURIComponent(bits[1]).replace(' ', '_');
@@ -425,19 +427,28 @@
         if (newWeek(bits[next])) {
           var ds = procWeekly(bits.slice(next, next + 2)).toISOString().substr(0, 10);
           var d = procLiteral(ds, bits[next + 1]);
+          restrict = 'w';
         } else {
           d = procLiteral(bits[next], bits[next + 1]);
         }
         
         var offset = zoneOffset(bits[0], d);
         d = new Date(d.getTime() - offset * 1000);
+        
+        var mode = null;
         next += 2;
         if (bits[next] == 'w') {
           d = repeatDays(d, 7);
           next += 1;
+          mode = 'w';
         } else if (bits[next] == 'b') {
           d = repeatDays(d, 14);
           next += 1;
+          mode = 'b';
+        }
+        
+        if (restrict && mode !== restrict) {
+          alert('Weekdays are only valid for weekly repeating.');
         }
         
         document.querySelector('p#UTC span.val').innerHTML = format(d, 0);
