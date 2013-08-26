@@ -200,7 +200,7 @@
       }
       
       function capitalize(s) {
-        return s.substr(0, 1).toUpperCase() + s.substr(1);
+        return s.substr(0, 1).toUpperCase() + s.substr(1).toLowerCase();
       }
       
       function procLiteral(ds, ts) {
@@ -222,7 +222,7 @@
       
       function procWeekly(bits) {
         
-        var day = bits[0].substr(1);
+        var day = bits[0].length > 3 ? bits[0].substr(1) : bits[0];
         var idx = DAYS.indexOf(capitalize(day));
         
         var now = new Date(Date.now());
@@ -396,12 +396,18 @@
         return x.charAt(0) == 'W' && x.length == 4 && x[0] != 'Wake';
       }
       
+      function newWeek(x) {
+        return DAYS.indexOf(capitalize(x)) >= 0;
+      }
+      
       function showInfo(url) {
         
         var bits = parseURL(url).path.split('/');
         bits.shift();
 		
-		if (digit(bits[0])) {
+		if (newWeek(bits[0])) {
+		  bits = ['UTC'].concat(bits);
+		} else if (digit(bits[0])) {
 		  bits = ['UTC'].concat(bits);
         } else if (oldWeek(bits[0])) {
           bits = ['UTC'].concat(bits);
@@ -416,7 +422,13 @@
         }
         
         var next = 1;
-        var d = procLiteral(bits[next], bits[next + 1]);
+        if (newWeek(bits[next])) {
+          var ds = procWeekly(bits.slice(next, next + 2)).toISOString().substr(0, 10);
+          var d = procLiteral(ds, bits[next + 1]);
+        } else {
+          d = procLiteral(bits[next], bits[next + 1]);
+        }
+        
         var offset = zoneOffset(bits[0], d);
         d = new Date(d.getTime() - offset * 1000);
         next += 2;
