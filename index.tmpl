@@ -10,6 +10,9 @@
         text-rendering: optimizelegibility;
         font-size: 1.8em;
         font-weight: bold;
+        color: #333;
+        background: #fafafa;
+        padding: 2em;
       }
       div#wrap {
         overflow: auto;
@@ -26,6 +29,39 @@
         float: left;
         color: #999;
       }
+
+
+      section {
+        clear: both;
+      }
+        input {
+        font: inherit;
+        padding: .3em .5em;
+      }
+      label,
+      fieldset,
+      input[type="submit"] {
+        display: block;
+        margin: 1em 0 0;
+      }
+      fieldset {
+        border: none;
+        padding: 0;
+      }
+      fieldset > label {
+        display: inline;
+        padding-right: .7em;
+      }
+      .meeting {
+        display: block;
+        border: 1px solid blue;
+        border-radius: .3em;
+        padding: 1em;
+        margin: 1em 0;
+        background: rgba( 0, 0, 255, .1 );
+      }
+
+
       footer p {
         font-weight: normal;
         font-size: 0.5em;
@@ -64,6 +100,42 @@
         <span class="label">Left</span>
         <span class="val"></span>
       </p>
+
+
+      <section>
+        <h2>Meeting URLs</h2>
+        <form action="/" method="get">
+
+          <label for="timezone">Timezone</label>  
+          <input type="text" name="timezone" id="timezone" size="30" list="tz" placeholder="Continent/Timezone" required>
+          
+          <label for="date">Date</label>
+          <input type="date" name="date" id="date" size="20" placeholder="YYYY-MM-DD" required>
+
+          <label for="time">Time</label>
+          <input type="time" id="time" size="20" placeholder="HH:MM" required>
+          
+          <fieldset>
+            <legend>Repeat?</legend>
+            <input type="radio" name="repeat" id="repeat-never" value="" checked required><label for="repeat-never">Never</label>
+                <input type="radio" name="repeat" id="repeat-w" value="w"><label for="repeat-w">Weekly</label>
+            <input type="radio" name="repeat" id="repeat-b" value="b"><label for="repeat-b">Bi-weekly</label>
+          </fieldset>
+          
+          <label for="title">Title</label>
+          <input type="text" name="title" id="title" size="30" placeholder="My awesome meeting" required>
+
+          <input type="submit" value="Create meeting URL">
+        </form>
+
+        <datalist id="tz">
+          <option>UTC</option>
+        </datalist>
+
+        <a href="/" class="meeting" hidden>Meeting link</a>
+      </section>
+
+
       <footer>
         <p>
           Created by <a href="http://dirkjan.ochtman.nl/">Dirkjan Ochtman</a>.
@@ -472,6 +544,49 @@
       
       showInfo(document.location);
       
+
+      (function( $ ) {
+        'use strict';
+
+        document.querySelector('form').addEventListener('submit', function( event ) {
+
+          // construct URL
+          var form = this,
+              URL = '/',
+              params = ['timezone', 'date', 'time', 'repeat', 'title'],
+              linkElement
+          ;
+
+          params = params.map(function( name ) {
+            return form.elements[ name ].value;
+          }).filter(function( value ) {
+            return !! value;
+          });
+          
+          // keep the timezone, lose the continent
+          params[0] = params[0].replace(/^.*\/(.*)$/, '$1');
+          // replace spaces with underscore in timezone
+          params[0] = params[0].replace(/\s+/g, '_');
+         
+          // encode all params and append to URL
+          URL += params
+            .map(encodeURIComponent)
+            .join('/')
+            // replace %3A with ':' (%3A not handled)
+            .replace(/%3A/g, ':')
+          ;
+          
+          // print URL
+          linkElement = document.querySelector('.meeting');
+          linkElement.setAttribute('href', URL);
+          linkElement.innerText = URL;
+          linkElement.removeAttribute('hidden');
+          
+          event.preventDefault();
+          return false;
+        });
+      }());
+
     </script>
   </body>
 </html>
