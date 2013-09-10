@@ -10,6 +10,9 @@
         text-rendering: optimizelegibility;
         font-size: 1.8em;
         font-weight: bold;
+        color: #333;
+        background: #fafafa;
+        padding: 2em;
       }
       div#wrap {
         overflow: auto;
@@ -37,6 +40,9 @@
         padding: 1em;
         background: #eee;
       }
+      section[hidden] {
+        display: none;
+      }
       section > h2 {
         margin-top: 0;
       }
@@ -58,6 +64,7 @@
         display: inline;
         padding-right: .7em;
       }
+
       .meeting {
         display: block;
         border: 1px solid blue;
@@ -66,7 +73,6 @@
         margin: 1em 0;
         background: rgba( 0, 0, 255, .1 );
       }
-
       a[hidden] {
         display: none;
       }
@@ -112,7 +118,8 @@
       </p>
 
 
-      <section>
+      <button>Show form</button>
+      <section hidden>
         <h2>Meeting URLs</h2>
         <form action="/" method="get">
 
@@ -595,6 +602,12 @@
           event.preventDefault();
           return false;
         });
+
+        // hide form behind button
+        document.querySelector('button').addEventListener('click', function() {
+          document.querySelector('section').removeAttribute('hidden');
+        });
+
       }());
 
     </script>
