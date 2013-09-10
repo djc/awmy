@@ -10,9 +10,6 @@
         text-rendering: optimizelegibility;
         font-size: 1.8em;
         font-weight: bold;
-        color: #333;
-        background: #fafafa;
-        padding: 2em;
       }
       div#wrap {
         overflow: auto;
@@ -33,8 +30,17 @@
 
       section {
         clear: both;
+        display: block;
+        font-weight: normal;
+        font-size: .55em;
+        margin: 2em 1em;
+        padding: 1em;
+        background: #eee;
       }
-        input {
+      section > h2 {
+        margin-top: 0;
+      }
+      input {
         font: inherit;
         padding: .3em .5em;
       }
@@ -59,6 +65,10 @@
         padding: 1em;
         margin: 1em 0;
         background: rgba( 0, 0, 255, .1 );
+      }
+
+      a[hidden] {
+        display: none;
       }
 
 
