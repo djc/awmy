@@ -565,6 +565,14 @@
       (function( $ ) {
         'use strict';
 
+        // add timezones
+        var options = document.getElementById('tz').innerHTML;
+        Object.keys(ZONES).sort().forEach(function(key) {
+          options += '<option>'+key+'</option>';
+        });
+        document.getElementById('tz').innerHTML = options;
+
+        // create URL when form submitted
         document.querySelector('form').addEventListener('submit', function( event ) {
 
           // construct URL
