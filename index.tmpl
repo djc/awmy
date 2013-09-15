@@ -117,9 +117,9 @@
       </p>
 
 
-      <button>Show form</button>
+      <button>Edit</button>
       <section hidden>
-        <h2>Meeting URLs</h2>
+        <h2>Edit meeting details</h2>
         <form action="/" method="get">
 
           <label for="timezone">Timezone</label>  
@@ -138,8 +138,8 @@
             <input type="radio" name="repeat" id="repeat-b" value="b"><label for="repeat-b">Bi-weekly</label>
           </fieldset>
           
-          <label for="title">Title</label>
-          <input type="text" name="title" id="title" size="30" placeholder="My awesome meeting" required>
+          <label for="title2">Title</label>
+          <input type="text" name="title" id="title2" size="30" placeholder="My awesome meeting" required>
 
           <input type="submit" value="Create meeting URL">
         </form>
@@ -487,6 +487,10 @@
       function newWeek(x) {
         return DAYS.indexOf(capitalize(x)) >= 0;
       }
+
+      function stringFromUrlPath(path) {
+        return path.replace(/(%20|_)+/g, ' ');
+      }
       
       function showInfo(url) {
         
@@ -552,6 +556,17 @@
           document.querySelector('p#title').style.display = 'block';
           document.title = title + ' - Are we meeting yet?';
         }
+
+        // set values in form for editing
+        bits = parseURL(url).path.split('/');
+        bits.shift();
+        document.getElementById('timezone').setAttribute('value',stringFromUrlPath(bits[0]));
+        document.getElementById('date').setAttribute('value',bits[1]);
+        document.getElementById('time').setAttribute('value',(bits[2].length<5?'0':'')+bits[2]);
+        if (bits.length === 5 && /^[wb]$/.test(bits[3])) {
+          document.getElementById('repeat-'+bits[3]).checked = true;
+        }
+        document.getElementById('title2').setAttribute('value',stringFromUrlPath(bits[bits.length-1]));
         
         refresh(d);
         window.setInterval(refresh, 100, d);
