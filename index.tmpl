@@ -64,18 +64,6 @@
         padding-right: .7em;
       }
 
-      .meeting {
-        display: block;
-        border: 1px solid blue;
-        border-radius: .3em;
-        padding: 1em;
-        margin: 1em 0;
-        background: rgba( 0, 0, 255, .1 );
-      }
-      a[hidden] {
-        display: none;
-      }
-
 
       footer p {
         font-weight: normal;
@@ -147,8 +135,6 @@
         <datalist id="tz">
           <option>UTC</option>
         </datalist>
-
-        <a href="/" class="meeting" hidden>Meeting link</a>
       </section>
 
 
@@ -588,6 +574,7 @@
 
         // create URL when form submitted
         document.querySelector('form').addEventListener('submit', function( event ) {
+          event.preventDefault();
 
           // construct URL
           var form = this,
@@ -615,13 +602,9 @@
             .replace(/%3A/g, ':')
           ;
           
-          // print URL
-          linkElement = document.querySelector('.meeting');
-          linkElement.setAttribute('href', URL);
-          linkElement.innerText = URL;
-          linkElement.removeAttribute('hidden');
+          // goto URL
+          location.href = URL;
           
-          event.preventDefault();
           return false;
         });
 
