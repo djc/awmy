@@ -546,13 +546,13 @@
         // set values in form for editing
         bits = parseURL(url).path.split('/');
         bits.shift();
-        document.getElementById('timezone').setAttribute('value',stringFromUrlPath(bits[0]));
-        document.getElementById('date').setAttribute('value',bits[1]);
-        document.getElementById('time').setAttribute('value',(bits[2].length<5?'0':'')+bits[2]);
+        document.getElementById('timezone').setAttribute('value', stringFromUrlPath(bits[0]));
+        document.getElementById('date').setAttribute('value', bits[1]);
+        document.getElementById('time').setAttribute('value', (bits[2].length < 5 ? '0' : '') + bits[2]);
         if (bits.length === 5 && /^[wb]$/.test(bits[3])) {
-          document.getElementById('repeat-'+bits[3]).checked = true;
+          document.getElementById('repeat-' + bits[3]).checked = true;
         }
-        document.getElementById('title2').setAttribute('value',stringFromUrlPath(bits[bits.length-1]));
+        document.getElementById('title2').setAttribute('value', stringFromUrlPath(bits[bits.length - 1]));
         
         refresh(d);
         window.setInterval(refresh, 100, d);
