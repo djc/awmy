@@ -112,7 +112,7 @@
       
       <section hidden>
         <h2>Edit meeting details</h2>
-        <form action="/" method="get">
+        <form id="form" action="/" method="get">
 
           <label for="timezone" class="name">Timezone</label>  
           <input type="text" name="timezone" id="timezone" size="30" list="tz" placeholder="Continent/Timezone" required>
@@ -631,6 +631,7 @@
         // hide form behind button
         document.querySelector('a.edit').addEventListener('click', function() {
           document.querySelector('section').removeAttribute('hidden');
+          document.location = '#form';
         });
 
       }());
