@@ -602,7 +602,7 @@
           // keep the timezone, lose the continent
           params[0] = params[0].replace(/^.*\/(.*)$/, '$1');
           // replace spaces with underscore in timezone
-          params[0] = params[0].replace(/\s+/g, '_');
+          params[0] = params[0].replace('_', ' ');
          
           // encode all params and append to URL
           URL += params
