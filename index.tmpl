@@ -68,7 +68,6 @@
         font-weight: normal;
         font-size: 0.5em;
         color: #999;
-        margin-left: 150px;
       }
       footer a {
         text-decoration: none;
@@ -76,6 +75,9 @@
       }
       footer a:hover, footer a:active {
         color: #f99;
+      }
+      footer span.right {
+        float: right;
       }
       
     </style>
@@ -103,9 +105,7 @@
         <span class="label">Left</span>
         <span class="val"></span>
       </p>
-
-
-      <button>Edit</button>
+      
       <section hidden>
         <h2>Edit meeting details</h2>
         <form action="/" method="get">
@@ -136,14 +136,17 @@
           <option>UTC</option>
         </datalist>
       </section>
-
-
+      
       <footer>
         <p>
-          Created by <a href="http://dirkjan.ochtman.nl/">Dirkjan Ochtman</a>.
-          <a href="http://bitbucket.org/djc/awmy/">Feedback welcome.</a>
+          <span class="left"><a class="edit">Create your own</a></span>
+          <span class="right">
+            Created by <a href="http://dirkjan.ochtman.nl/">Dirkjan Ochtman</a>.
+            <a href="http://bitbucket.org/djc/awmy/">Feedback welcome.</a>
+          </span>
         </p>
       </footer>
+      
     </div>
     
     <script>
@@ -618,7 +621,7 @@
         });
 
         // hide form behind button
-        document.querySelector('button').addEventListener('click', function() {
+        document.querySelector('a.edit').addEventListener('click', function() {
           document.querySelector('section').removeAttribute('hidden');
         });
 
