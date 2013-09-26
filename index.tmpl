@@ -560,33 +560,30 @@
       }
       
       showInfo(document.location);
-      
-
-      (function( $ ) {
+      (function($) {
         'use strict';
 
         // add timezones
         var options = document.getElementById('tz').innerHTML;
         Object.keys(ZONES).sort().forEach(function(key) {
-          options += '<option>'+key+'</option>';
+          options += '<option>' + key + '</option>';
         });
         document.getElementById('tz').innerHTML = options;
 
         // create URL when form submitted
-        document.querySelector('form').addEventListener('submit', function( event ) {
+        document.querySelector('form').addEventListener('submit', function(event) {
+          
           event.preventDefault();
-
           // construct URL
           var form = this,
               URL = '/',
               params = ['timezone', 'date', 'time', 'repeat', 'title'],
-              linkElement
-          ;
+              linkElement;
 
-          params = params.map(function( name ) {
-            return form.elements[ name ].value;
-          }).filter(function( value ) {
-            return !! value;
+          params = params.map(function(name) {
+            return form.elements[name].value;
+          }).filter(function(value) {
+            return !!value;
           });
           
           // keep the timezone, lose the continent
@@ -599,13 +596,12 @@
             .map(encodeURIComponent)
             .join('/')
             // replace %3A with ':' (%3A not handled)
-            .replace(/%3A/g, ':')
-          ;
+            .replace(/%3A/g, ':');
           
           // goto URL
           location.href = URL;
-          
           return false;
+          
         });
 
         // hide form behind button
