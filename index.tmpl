@@ -63,6 +63,10 @@
         display: inline;
         padding-right: .7em;
       }
+      label.name, legend.name {
+        padding-left: 1px;
+        padding-bottom: 2px;
+      }
       
       footer p {
         font-weight: normal;
@@ -110,23 +114,23 @@
         <h2>Edit meeting details</h2>
         <form action="/" method="get">
 
-          <label for="timezone">Timezone</label>  
+          <label for="timezone" class="name">Timezone</label>  
           <input type="text" name="timezone" id="timezone" size="30" list="tz" placeholder="Continent/Timezone" required>
           
-          <label for="date">Date</label>
+          <label for="date" class="name">Date</label>
           <input type="date" name="date" id="date" size="20" placeholder="YYYY-MM-DD" required>
 
-          <label for="time">Time</label>
+          <label for="time" class="name">Time</label>
           <input type="time" id="time" size="20" placeholder="HH:MM" required>
           
           <fieldset>
-            <legend>Repeat?</legend>
+            <legend class="name">Repeat?</legend>
             <input type="radio" name="repeat" id="repeat-never" value="" checked required><label for="repeat-never">Never</label>
             <input type="radio" name="repeat" id="repeat-w" value="w"><label for="repeat-w">Weekly</label>
             <input type="radio" name="repeat" id="repeat-b" value="b"><label for="repeat-b">Bi-weekly</label>
           </fieldset>
           
-          <label for="title-field">Title</label>
+          <label for="title-field" class="name">Title</label>
           <input type="text" name="title" id="title-field" size="30" placeholder="My awesome meeting" required>
 
           <input type="submit" value="Create meeting URL">
