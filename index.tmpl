@@ -485,8 +485,11 @@
         
         var bits = parseURL(url).path.split('/');
         bits.shift();
+        if (bits.length) {
+          document.querySelector('a.edit').innerHTML = 'Edit details';
+        }
+        
         var restrict = null;
-		
 		if (newWeek(bits[0])) {
 		  bits = ['UTC'].concat(bits);
 		} else if (digit(bits[0])) {
