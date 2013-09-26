@@ -586,6 +586,19 @@
             return !!value;
           });
           
+          var repeat = '';
+          for (var i in form.elements['repeat']) {
+            var f = form.elements['repeat'][i];
+            if (f.checked) {
+              repeat = f.value;
+              break;
+            }
+          }
+          
+          if (repeat) {
+            params.splice(3, 0, [repeat]);
+          }
+          
           // keep the timezone, lose the continent
           params[0] = params[0].replace(/^.*\/(.*)$/, '$1');
           // replace spaces with underscore in timezone
