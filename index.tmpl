@@ -4,6 +4,7 @@
     <title>Are we meeting yet?</title>
     <meta charset="utf-8">
     <style>
+      
       body {
         text-align: center;
         font-family: "Lucida Grande", "Segoe UI", "Roboto", "Helvetica", sans-serif;
@@ -12,66 +13,167 @@
         font-weight: bold;
         background: #fafafa;
         color: #333;
+        padding: 2em;
       }
+      
       div#wrap {
         overflow: auto;
-        margin: 150px auto;
+        margin: 0px auto;
         text-align: left;
         width: 850px;
       }
+      
+      h1 {
+        text-align: center;
+        font-size: 1.8em;
+      }
+      
       p {
         margin: 30px;
+        margin-top: 30px;
       }
+      
+      p#local, p#ref {
+        display: none;
+        text-align: center;
+      }
+      
       span.label {
-        width: 120px;
         display: block;
-        float: left;
-        color: #999;
+        color: #aaa;
+        width: 100%;
+        font-weight: normal;
+        font-size: 0.7em;
+        margin: 10px;
       }
+      
+      section {
+        clear: both;
+        display: block;
+        font-weight: normal;
+        font-size: .55em;
+        margin: 2em 1em;
+        padding: 1em;
+      }
+      
+      section[hidden] {
+        display: none;
+      }
+      
+      section > h2 {
+        margin-top: 0;
+      }
+      
+      input {
+        font: inherit;
+        padding: .3em .5em;
+      }
+      
+      label,
+      fieldset,
+      input[type="submit"] {
+        display: block;
+        margin: 1em 0 0;
+      }
+      
+      fieldset {
+        border: none;
+        padding: 0;
+      }
+      
+      fieldset > label {
+        display: inline;
+        padding-right: .7em;
+      }
+      
+      label.name, legend.name {
+        padding-left: 1px;
+        padding-bottom: 2px;
+      }
+      
       footer p {
         font-weight: normal;
         font-size: 0.5em;
         color: #999;
-        margin-left: 150px;
+        margin-top: 80px;
       }
+      
       footer a {
         text-decoration: none;
         color: #99f;
       }
+      
+      footer a.edit {
+        cursor: pointer;
+      }
+      
       footer a:hover, footer a:active {
         color: #f99;
       }
+      
+      footer span.right {
+        float: right;
+      }
+      
     </style>
   </head>
   <body>
     
     <div id="wrap">
-      <p id="title" style="display: none;">
-        <span class="label">Title</span>
+      <h1></h1>
+      <p id="local">
+        <span id="your" class="label">Your time:</span>
         <span class="val"></span>
+        <span id="delta" class="label"></span>
       </p>
       <p id="ref" style="display: none;">
-        <span class="label">Set</span>
+        <span class="label">On your calendar:</span>
         <span class="val"></span>
+        <span id="zone" class="label"></span>
       </p>
-      <p id="UTC">
-        <span class="label">UTC</span>
-        <span class="val"></span>
-      </p>
-      <p id="local">
-        <span class="label">Local</span>
-        <span class="val"></span>
-      </p>
-      <p id="delta">
-        <span class="label">Left</span>
-        <span class="val"></span>
-      </p>
+      
+      <section hidden>
+        <h2>Edit meeting details</h2>
+        <form id="form" action="/" method="get">
+
+          <label for="timezone" class="name">Timezone</label>  
+          <input type="text" name="timezone" id="timezone" size="30" list="tz" placeholder="Continent/Timezone" required>
+          
+          <label for="date" class="name">Date</label>
+          <input type="date" name="date" id="date" size="20" placeholder="YYYY-MM-DD" required>
+
+          <label for="time" class="name">Time</label>
+          <input type="time" id="time" size="20" placeholder="HH:MM" required>
+          
+          <fieldset>
+            <legend class="name">Repeat?</legend>
+            <input type="radio" name="repeat" id="repeat-never" value="" checked required><label for="repeat-never">Never</label>
+            <input type="radio" name="repeat" id="repeat-w" value="w"><label for="repeat-w">Weekly</label>
+            <input type="radio" name="repeat" id="repeat-b" value="b"><label for="repeat-b">Bi-weekly</label>
+          </fieldset>
+          
+          <label for="title-field" class="name">Title</label>
+          <input type="text" name="title" id="title-field" size="30" placeholder="My awesome meeting" required>
+          
+          <input type="submit" value="Go to new URL">
+          
+        </form>
+
+        <datalist id="tz">
+          <option>UTC</option>
+        </datalist>
+      </section>
+      
       <footer>
         <p>
-          Created by <a href="http://dirkjan.ochtman.nl/">Dirkjan Ochtman</a>.
-          <a href="http://bitbucket.org/djc/awmy/">Feedback welcome.</a>
+          <span class="left"><a class="edit">Create your own</a></span>
+          <span class="right">
+            Created by <a href="http://dirkjan.ochtman.nl/">Dirkjan Ochtman</a>.
+            <a href="http://bitbucket.org/djc/awmy/">Feedback welcome.</a>
+          </span>
         </p>
       </footer>
+      
     </div>
     
     <script>
@@ -131,7 +233,7 @@
         
         var delta = Math.floor((y.getTime() - x.getTime()) / 1000);
         if (delta < 0) {
-          return 'None';
+          return 'in the past';
         }
         
         for (unit in scales) {
@@ -154,7 +256,7 @@
       
       function refresh(d) {
         var relString = relTime(new Date(), d);
-        document.querySelector('p#delta span.val').innerHTML = relString;
+        document.querySelector('span#delta').innerHTML = '(' + relString + ')';
       }
       
       var DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -184,15 +286,17 @@
     	  suffix = 'th';
     	}
     	
-    	var ds = DAYS[wd] + ', ' + dn + suffix + ' of ' + MONTHS[m] + ' ' + y;
-    	var ts = ' at ' + pad(H) + ':' + pad(M) + ':' + pad(S);
+    	var ds = DAYS[wd] + ', ' + dn + suffix + ' ' + MONTHS[m] + ', ';
+    	var ts = pad(H) + ':' + pad(M);
     	
+    	var zone = '';
     	if (offset) {
     	  var delta = pad(offset / 60) + ':' + pad(offset % 60);
-    	  ts = ts + ' [' + (offset > 0 ? '+' : '') + delta + ']';
+    	  zone = (offset > 0 ? '+' : '') + delta;
+    	  zone = zone.substr(0, 1) + ' ' + zone.substr(1);
     	}
     	
-    	return ds + ts;
+    	return [ds + ts, zone];
     	
       }
       
@@ -401,13 +505,24 @@
       function newWeek(x) {
         return DAYS.indexOf(capitalize(x)) >= 0;
       }
+
+      function stringFromUrlPath(path) {
+        return path.replace(/(%20|_)+/g, ' ');
+      }
       
       function showInfo(url) {
         
         var bits = parseURL(url).path.split('/');
         bits.shift();
+        if (bits.length > 1) {
+          document.querySelector('a.edit').innerHTML = 'Use as template';
+        } else {
+          document.querySelector('section').removeAttribute('hidden');
+          document.location = '#form';
+          return;
+        }
+        
         var restrict = null;
-		
 		if (newWeek(bits[0])) {
 		  bits = ['UTC'].concat(bits);
 		} else if (digit(bits[0])) {
@@ -422,6 +537,7 @@
             bits = [zone].concat(bits.slice(2));
           } else {
             bits[0] = decodeURIComponent(bits[0]);
+            zone = bits[0];
           }
         }
         
@@ -453,19 +569,47 @@
           alert('Weekdays are only valid for weekly repeating.');
         }
         
-        document.querySelector('p#UTC span.val').innerHTML = format(d, 0);
-        document.querySelector('p#local span.val').innerHTML = format(d, -d.getTimezoneOffset());
-        if (bits[0] != 'UTC') {
-          document.querySelector('p#ref span.val').innerHTML = format(d, offset / 60);
-          document.querySelector('p#ref').style.display = 'block';
+        var para = document.querySelector('p#local');
+        var local = format(d, -d.getTimezoneOffset());
+        para.querySelector('span.val').innerHTML = local[0];
+        var label = para.querySelector('span#your');
+        if (mode) {
+          label.innerHTML = 'Next occurrence, your time (UTC ' + local[1] + '):';
+        } else {
+          label.innerHTML = 'Your time (UTC ' + local[1] + '):';
         }
+        para.style.display = 'block';
+        
+        var ref = format(d, offset / 60);
+        document.querySelector('p#ref span.val').innerHTML = ref[0];
+        zone = zone.replace(' ', '_');
+        zone = LOCAL[zone.toLowerCase()] || zone;
+        zone = zone.replace('_', ' ');
+        if (zone == 'UTC') {
+          var text = '(in UTC)';
+        } else {
+          text = '(in ' + zone + ', UTC ' + ref[1] + ')';
+        }
+        document.querySelector('p#ref span#zone').innerHTML = text;
+        document.querySelector('p#ref').style.display = 'block';
         
         var title = decodeURIComponent(bits[next]);
         if (title != 'undefined') {
-          document.querySelector('p#title span.val').innerHTML = title;
-          document.querySelector('p#title').style.display = 'block';
+          document.querySelector('h1').innerHTML = title;
+          document.querySelector('h1').style.display = 'block';
           document.title = title + ' - Are we meeting yet?';
         }
+
+        // set values in form for editing
+        bits = parseURL(url).path.split('/');
+        bits.shift();
+        document.getElementById('timezone').setAttribute('value', stringFromUrlPath(bits[0]));
+        document.getElementById('date').setAttribute('value', bits[1]);
+        document.getElementById('time').setAttribute('value', (bits[2].length < 5 ? '0' : '') + bits[2]);
+        if (bits.length === 5 && /^[wb]$/.test(bits[3])) {
+          document.getElementById('repeat-' + bits[3]).checked = true;
+        }
+        document.getElementById('title-field').setAttribute('value', stringFromUrlPath(bits[bits.length - 1]));
         
         refresh(d);
         window.setInterval(refresh, 100, d);
@@ -473,7 +617,71 @@
       }
       
       showInfo(document.location);
-      
+      (function($) {
+        'use strict';
+
+        // add timezones
+        var options = document.getElementById('tz').innerHTML;
+        Object.keys(ZONES).sort().forEach(function(key) {
+          options += '<option>' + key + '</option>';
+        });
+        document.getElementById('tz').innerHTML = options;
+
+        // create URL when form submitted
+        document.querySelector('form').addEventListener('submit', function(event) {
+          
+          event.preventDefault();
+          // construct URL
+          var form = this,
+              URL = '/',
+              params = ['timezone', 'date', 'time', 'repeat', 'title'],
+              linkElement;
+
+          params = params.map(function(name) {
+            return form.elements[name].value;
+          }).filter(function(value) {
+            return !!value;
+          });
+          
+          var repeat = '';
+          for (var i in form.elements['repeat']) {
+            var f = form.elements['repeat'][i];
+            if (f.checked) {
+              repeat = f.value;
+              break;
+            }
+          }
+          
+          if (repeat) {
+            params.splice(3, 0, [repeat]);
+          }
+          
+          // keep the timezone, lose the continent
+          params[0] = params[0].replace(/^.*\/(.*)$/, '$1');
+          // replace spaces with underscore in timezone
+          params[0] = params[0].replace('_', ' ');
+         
+          // encode all params and append to URL
+          URL += params
+            .map(encodeURIComponent)
+            .join('/')
+            // replace %3A with ':' (%3A not handled)
+            .replace(/%3A/g, ':');
+          
+          // goto URL
+          location.href = URL;
+          return false;
+          
+        });
+
+        // hide form behind button
+        document.querySelector('a.edit').addEventListener('click', function() {
+          document.querySelector('section').removeAttribute('hidden');
+          document.location = '#form';
+        });
+
+      }());
+
     </script>
   </body>
 </html>
