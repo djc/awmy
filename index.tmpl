@@ -127,7 +127,7 @@
         <span id="delta" class="label"></span>
       </p>
       <p id="ref" style="display: none;">
-        <span class="label">On your calendar:</span>
+        <span class="label">For your calendar:</span>
         <span class="val"></span>
         <span id="zone" class="label"></span>
       </p>
@@ -590,7 +590,7 @@
         if (zone == 'UTC') {
           var text = '(in UTC)';
         } else {
-          text = '(in ' + zone + ', UTC ' + ref[1] + ')';
+          text = '(in timezone ' + zone + ', UTC ' + ref[1] + ')';
         }
         document.querySelector('p#ref span#zone').innerHTML = text;
         document.querySelector('p#ref').style.display = 'block';
