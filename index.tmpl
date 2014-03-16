@@ -679,6 +679,15 @@
 
       }());
 
+      // check time format
+      document.getElementById('time').addEventListener('change', function() {
+        // append :00 minutes to 2-digit entry
+        var timeInput = document.getElementById('time');
+        if (/^\d\d$/.test(timeInput.value)) {
+          timeInput.value += ':00';
+        }
+      });
+
     </script>
   </body>
 </html>
