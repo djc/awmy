@@ -618,7 +618,7 @@
         if (bits.length === 5 && /^[wb]$/.test(bits[3])) {
           document.getElementById('repeat-' + bits[3]).checked = true;
         }
-        document.getElementById('title-field').setAttribute('value', stringFromUrlPath(bits[bits.length - 1]));
+        document.getElementById('title-field').setAttribute('value', decodeURIComponent(stringFromUrlPath(bits[bits.length - 1])));
         
         refresh(d);
         window.setInterval(refresh, 100, d);
