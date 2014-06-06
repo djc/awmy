@@ -549,9 +549,6 @@
           d = procLiteral(bits[next], bits[next + 1]);
         }
         
-        var offset = zoneOffset(bits[0], d);
-        d = new Date(d.getTime() - offset * 1000);
-        
         var mode = null;
         next += 2;
         if (bits[next] == 'w') {
@@ -567,6 +564,9 @@
         if (restrict && mode !== restrict) {
           alert('Weekdays are only valid for weekly repeating.');
         }
+        
+        var offset = zoneOffset(bits[0], d);
+        d = new Date(d.getTime() - offset * 1000);
         
         var para = document.querySelector('p#local');
         var local = format(d, -d.getTimezoneOffset());
