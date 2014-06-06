@@ -521,6 +521,8 @@
           return;
         }
         
+        // Extract data from URL
+        
         var restrict = null;
 		if (newWeek(bits[0])) {
 		  bits = ['UTC'].concat(bits);
@@ -540,6 +542,8 @@
           }
         }
         
+        // Calculate date value from URL data
+        
         var next = 1;
         if (newWeek(bits[next])) {
           var ds = procWeekly(bits.slice(next, next + 2)).toISOString().substr(0, 10);
@@ -548,6 +552,8 @@
         } else {
           d = procLiteral(bits[next], bits[next + 1]);
         }
+        
+        // Apply repetitions to get future date
         
         var mode = null;
         next += 2;
@@ -565,8 +571,12 @@
           alert('Weekdays are only valid for weekly repeating.');
         }
         
+        // Apply necessary offset
+        
         var offset = zoneOffset(bits[0], d);
         d = new Date(d.getTime() - offset * 1000);
+        
+        // Show results in document
         
         var para = document.querySelector('p#local');
         var local = format(d, -d.getTimezoneOffset());
