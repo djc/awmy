@@ -273,8 +273,10 @@
     	
     	var dstr = dn.toString();
     	var last = parseInt(dstr.substr(dstr.length - 1, 1), 10);
-    	if (last == 1) {
-    	  var suffix = 'st';
+    	if (parseInt(dstr, 10) >= 13 && parseInt(dstr, 10) < 20) {
+    	  var suffix = 'th';
+    	} else if (last == 1) {
+          suffix = 'st';
     	} else if (last == 2) {
     	  suffix = 'nd';
     	} else if (last == 3) {
