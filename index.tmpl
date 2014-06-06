@@ -643,7 +643,7 @@
           // construct URL
           var form = this,
               URL = '/',
-              params = ['timezone', 'date', 'time', 'repeat', 'title'],
+              params = ['timezone', 'date', 'time', 'title'],
               linkElement;
 
           params = params.map(function(name) {
@@ -659,6 +659,10 @@
               repeat = f.value;
               break;
             }
+          }
+          
+          if (repeat) {
+            params.splice(3, 0, [repeat]);
           }
           
           // keep the timezone, lose the continent
