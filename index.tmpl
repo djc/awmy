@@ -124,7 +124,7 @@
         <span id="delta" class="label"></span>
       </p>
       <p id="ref" style="display: none;">
-        <span class="label">For your calendar:</span>
+        <span class="label">For your calendar (<a id="ical">add it</a>):</span>
         <span class="val"></span>
         <span id="zone" class="label"></span>
       </p>
@@ -513,6 +513,16 @@
         return path.replace(/(%20|_)+/g, ' ');
       }
       
+      function hashString(s) {
+        var hash = 0;
+        if (s.length == 0) return hash;
+        for (i = 0; i < s.length; i++) {
+          hash = ((hash << 5) - hash) + s.charCodeAt(i);
+          hash = hash & hash;
+        }
+        return Math.abs(hash).toString(32);
+      }
+      
       function showInfo(url) {
         
         var bits = parseURL(url).path.split('/');
@@ -607,8 +617,44 @@
           document.querySelector('h1').style.display = 'block';
           document.title = title + ' - Are we meeting yet?';
         }
-
-        // set values in form for editing
+        
+        // Build iCal event
+        
+        function iCalDate(d) {
+          return d.toISOString().replace(/[-:]+/g, '').substr(0, 15);
+        }
+        
+        var specDate = new Date(d.getTime() + offset * 1000);
+        if (bits[0] === 'UTC') {
+           var iCalStart = ':' + iCalDate(specDate) + 'Z';
+        } else {
+           iCalStart = ';TZID=' + bits[0] + ':' + iCalDate(specDate);
+        }
+        
+        var iCalLines = [
+          'BEGIN:VCALENDAR',
+          'VERSION:2.0',
+          'PRODID:-//XavaMedia//arewemeetingyet.com//EN',
+          'BEGIN:VEVENT',
+          'UID:' + hashString(JSON.stringify(bits)) + '@arewemeetingyet.com',
+          'DTSTAMP:' + iCalDate(new Date()) + 'Z',
+          'DTSTART' + iCalStart,
+          'SUMMARY:' + title,
+          'END:VEVENT',
+          'END:VCALENDAR'
+        ];
+        
+        if (mode) {
+          var iCalRule = 'RRULE:FREQ=WEEKLY' + (mode == 'b' ? ';INTERVAL=2' : '');
+          iCalLines.splice(6, 0, iCalRule);
+        }
+        
+        var iCalData = iCalLines.join('\r\n') + '\r\n';
+        var iCalLink = document.getElementById('ical');
+        iCalLink.href = 'data:text/calendar;base64,' + btoa(iCalData);
+        
+        // Set values in form for editing
+        
         bits = parseURL(url).path.split('/');
         bits.shift();
         document.getElementById('timezone').setAttribute('value', stringFromUrlPath(bits[0]));
