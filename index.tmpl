@@ -568,6 +568,9 @@
           d = repeatDays(d, 14);
           next += 1;
           mode = 'b';
+        } else {
+          bits.splice(next, 0, null);
+          next += 1;
         }
         
         // Apply necessary offset
