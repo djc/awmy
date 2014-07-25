@@ -570,10 +570,6 @@
           mode = 'b';
         }
         
-        if (restrict && mode !== restrict) {
-          alert('Weekdays are only valid for weekly repeating.');
-        }
-        
         // Apply necessary offset
         
         var offset = zoneOffset(bits[0], d);
@@ -619,6 +615,12 @@
           document.getElementById('repeat-' + bits[3]).checked = true;
         }
         document.getElementById('title-field').setAttribute('value', decodeURIComponent(stringFromUrlPath(bits[bits.length - 1])));
+        
+        // Warn about data which is only valid in repeating mode
+        
+        if (restrict && mode !== restrict) {
+          alert('Weekdays are only valid for weekly repeating.');
+        }
         
         refresh(d);
         window.setInterval(refresh, 100, d);
