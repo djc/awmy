@@ -652,6 +652,7 @@
         var iCalData = iCalLines.join('\r\n') + '\r\n';
         var iCalLink = document.getElementById('ical');
         iCalLink.href = 'data:text/calendar;base64,' + btoa(iCalData);
+        iCalLink.title = "iCalendar event for '" + title + "'";
         
         // Set values in form for editing
         
