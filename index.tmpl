@@ -353,16 +353,20 @@
         LOCAL[local.toLowerCase()] = key;
       }
       
-      function zoneOffset(zone, d) {
-        
-        if (zone == 'UTC') {
-          return 0;
-        }
-        
+      function canonicalZone(zone) {
+        if (zone === 'UTC') return zone;
         zone = zone.replace(' ', '_');
         zone = LOCAL[zone.toLowerCase()] || zone;
         if (ZONES[zone].length > 1) {
           alert('This code has not been tested! (zone-multi)');
+        }
+        return zone;
+      }
+      
+      function zoneOffset(zone, d) {
+        
+        if (zone == 'UTC') {
+          return 0;
         }
         
         var active = ZONES[zone][ZONES[zone].length - 1];
@@ -535,10 +539,9 @@
         } else {
           if (PARTS.indexOf(bits[0]) >= 0) {
             var zone = decodeURIComponent(bits[0]) + '/' + decodeURIComponent(bits[1]).replace(' ', '_');
-            bits = [zone].concat(bits.slice(2));
+            bits = [canonicalZone(zone)].concat(bits.slice(2));
           } else {
-            bits[0] = decodeURIComponent(bits[0]);
-            zone = bits[0];
+            bits[0] = canonicalZone(decodeURIComponent(bits[0]));
           }
         }
         
@@ -591,13 +594,10 @@
         
         var ref = format(d, offset / 60);
         document.querySelector('p#ref span.val').innerHTML = ref[0];
-        zone = zone.replace(' ', '_');
-        zone = LOCAL[zone.toLowerCase()] || zone;
-        zone = zone.replace('_', ' ');
-        if (zone == 'UTC') {
+        if (bits[0] == 'UTC') {
           var text = '(in UTC)';
         } else {
-          text = '(in timezone ' + zone + ', UTC ' + ref[1] + ')';
+          text = '(in timezone ' + bits[0].replace('_', ' ') + ', UTC ' + ref[1] + ')';
         }
         document.querySelector('p#ref span#zone').innerHTML = text;
         document.querySelector('p#ref').style.display = 'block';
