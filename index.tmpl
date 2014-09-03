@@ -566,6 +566,11 @@
           d = procLiteral(bits[next], bits[next + 1]);
         }
         
+        // Apply necessary offset
+        
+        var offset = zoneOffset(bits[0], d);
+        d = new Date(d.getTime() - offset * 1000);
+        
         // Apply repetitions to get future date
         
         var mode = null;
@@ -582,11 +587,6 @@
           bits.splice(next, 0, null);
           next += 1;
         }
-        
-        // Apply necessary offset
-        
-        var offset = zoneOffset(bits[0], d);
-        d = new Date(d.getTime() - offset * 1000);
         
         // Show results in document
         
