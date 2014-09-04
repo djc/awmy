@@ -112,6 +112,15 @@
         color: #f99;
       }
       
+      span.hint {
+        color: #aaa;
+      }
+      
+      p.narrow {
+        margin: 0;
+        width: 450px;
+      }
+      
     </style>
   </head>
   <body>
@@ -130,10 +139,16 @@
       </p>
       
       <section hidden>
-        <h2>Details of new meeting</h2>
+        <h2>Build new meeting link</h2>
         <form id="form" action="/" method="get">
-
-          <label for="timezone" class="name">Timezone</label>  
+          
+          <p class="narrow">
+            Enter your meeting details to build a new URL. Click the button
+            at the bottom of the form to go there, then send the address
+            of that page to other meeting participants.
+          </p>
+          
+          <label for="timezone" class="name">Timezone <span class="hint">(reference/stable timezone for your meeting)</span></label>
           <input type="text" name="timezone" id="timezone" size="30" list="tz" placeholder="Continent/Timezone" required>
           
           <label for="date" class="name">Date</label>
@@ -149,7 +164,7 @@
             <input type="radio" name="repeat" id="repeat-b" value="b"><label for="repeat-b">Bi-weekly</label>
           </fieldset>
           
-          <label for="title-field" class="name">Title</label>
+          <label for="title-field" class="name">Title <span class="hint">(optional)</span></label>
           <input type="text" name="title" id="title-field" size="30" placeholder="My awesome meeting" required>
           
           <input type="submit" value="Go to URL for new meeting">
