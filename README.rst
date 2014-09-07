@@ -20,4 +20,5 @@ Refer to the ``Makefile`` for further instructions. The ``source.json``
 
 The JavaScript code currently assumes installation at a host root and
 redirection of all requests for that host to ``index.html``. On Apache, this
-can be achieved by employing the ``FallbackResource`` directive.
+can be achieved by employing the ``FallbackResource`` directive (consider
+also enabling ``AllowEncodedSlashes`` for your virtual host).
