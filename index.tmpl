@@ -152,10 +152,10 @@
           <input type="text" name="timezone" id="timezone" size="30" list="tz" placeholder="Continent/Timezone" required>
           
           <label for="date" class="name">Date</label>
-          <input type="date" name="date" id="date" size="20" placeholder="YYYY-MM-DD" required>
+          <input type="date" name="date" id="date" size="20" placeholder="YYYY-MM-DD" pattern="[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])" required>
 
           <label for="time" class="name">Time</label>
-          <input type="time" id="time" size="20" placeholder="HH:MM" required>
+          <input type="time" id="time" size="20" placeholder="HH:MM" pattern="[012][0-9]:[0-5][0-9]" required>
           
           <fieldset>
             <legend class="name">Repeat?</legend>
@@ -757,6 +757,15 @@
         });
 
       }());
+
+      // check time format
+      document.getElementById('time').addEventListener('change', function() {
+        // append :00 minutes to 2-digit entry
+        var timeInput = document.getElementById('time');
+        if (/^\d\d$/.test(timeInput.value)) {
+          timeInput.value += ':00';
+        }
+      });
 
     </script>
   </body>
