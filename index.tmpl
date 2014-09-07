@@ -765,6 +765,9 @@
         if (/^\d\d$/.test(timeInput.value)) {
           timeInput.value += ':00';
         }
+        if (timeInput.value > '21' || timeInput.value < '06') {
+          alert("Meeting planned during reference timezone's night, are you sure?");
+        }
       });
 
     </script>
