@@ -626,7 +626,7 @@
         document.querySelector('p#ref span#zone').innerHTML = text;
         document.querySelector('p#ref').style.display = 'block';
         
-        var title = decodeURIComponent(bits[next]);
+        var title = decodeURIComponent(bits.slice(next).join('/'));
         if (title != 'undefined') {
           document.querySelector('h1').innerHTML = title;
           document.querySelector('h1').style.display = 'block';
