@@ -603,9 +603,9 @@
         var offset = zoneOffset(bits[0], d);
         d = new Date(d.getTime() - offset * 1000);
         var now = new Date();
-        if (mode == 'w' && d.getTime() > (now.getTime() - (86400 * 7 * 1000))) {
+        if (mode == 'w' && now.getTime() < (d.getTime() - (86400 * 7 * 1000))) {
           d = new Date(d.getTime() - (86400 * 7 * 1000));
-        } else if (mode == 'b' && d.getTime() > (now.getTime() - (86400 * 14 * 1000))) {
+        } else if (mode == 'b' && now.getTime() < (d.getTime() - (86400 * 14 * 1000))) {
           d = new Date(d.getTime() - (86400 * 14 * 1000));
         }
         
