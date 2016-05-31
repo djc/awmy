@@ -257,8 +257,8 @@
             return str + ' from now';
           }
           if ((n >= 2) || (s == 1)) {
-          	var str = Math.floor(n) + ' ' + unit + (n > 1 ? 's' : '');
-          	return str + ' from now';
+            var str = Math.floor(n) + ' ' + unit + (n > 1 ? 's' : '');
+            return str + ' from now';
           }
         }
         
@@ -279,39 +279,39 @@
         
         d = new Date(d.getTime() + offset * 60 * 1000);
 	    var wd = d.getUTCDay();
-    	var dn = d.getUTCDate();
-    	var m = d.getUTCMonth();
-    	var y = d.getUTCFullYear();
-    	var H = d.getUTCHours();
-    	var M = d.getUTCMinutes();
-    	var S = d.getUTCSeconds();
-    	
-    	var dstr = dn.toString();
-    	var last = parseInt(dstr.substr(dstr.length - 1, 1), 10);
-    	if (parseInt(dstr, 10) >= 7 && parseInt(dstr, 10) < 20) {
-    	  var suffix = 'th';
-    	} else if (last == 1) {
+        var dn = d.getUTCDate();
+        var m = d.getUTCMonth();
+        var y = d.getUTCFullYear();
+        var H = d.getUTCHours();
+        var M = d.getUTCMinutes();
+        var S = d.getUTCSeconds();
+        
+        var dstr = dn.toString();
+        var last = parseInt(dstr.substr(dstr.length - 1, 1), 10);
+        if (parseInt(dstr, 10) >= 7 && parseInt(dstr, 10) < 20) {
+          var suffix = 'th';
+        } else if (last == 1) {
           suffix = 'st';
-    	} else if (last == 2) {
-    	  suffix = 'nd';
-    	} else if (last == 3) {
-    	  suffix = 'rd';
-    	} else {
-    	  suffix = 'th';
-    	}
-    	
-    	var ds = DAYS[wd] + ', ' + dn + suffix + ' ' + MONTHS[m] + ', ';
-    	var ts = pad(H) + ':' + pad(M);
-    	
-    	var zone = '';
-    	if (offset) {
-    	  var delta = pad(offset / 60) + ':' + pad(offset % 60);
-    	  zone = (offset > 0 ? '+' : '') + delta;
-    	  zone = zone.substr(0, 1) + ' ' + zone.substr(1);
-    	}
-    	
-    	return [ds + ts, zone];
-    	
+        } else if (last == 2) {
+          suffix = 'nd';
+        } else if (last == 3) {
+          suffix = 'rd';
+        } else {
+          suffix = 'th';
+        }
+        
+        var ds = DAYS[wd] + ', ' + dn + suffix + ' ' + MONTHS[m] + ', ';
+        var ts = pad(H) + ':' + pad(M);
+        
+        var zone = '';
+        if (offset) {
+          var delta = pad(offset / 60) + ':' + pad(offset % 60);
+          zone = (offset > 0 ? '+' : '') + delta;
+          zone = zone.substr(0, 1) + ' ' + zone.substr(1);
+        }
+        
+        return [ds + ts, zone];
+        
       }
       
       function digit(s) {
