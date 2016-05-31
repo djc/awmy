@@ -569,6 +569,8 @@
             bits[0] = canonicalZone(decodeURIComponent(bits[0]));
           }
         }
+
+        console.log('BITS', JSON.stringify(bits));
         
         // Calculate date value from URL data
         
@@ -580,6 +582,8 @@
         } else {
           d = procLiteral(bits[next], bits[next + 1]);
         }
+        
+        console.log('DATE', d);
         
         // Apply repetitions to get future date
         
