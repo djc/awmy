@@ -328,8 +328,7 @@
         var dbits = ds.split('-');
         var d = new Date();
         d.setUTCFullYear(dbits[0]);
-        d.setUTCMonth(dbits[1] - 1);
-        d.setUTCDate(dbits[2]);
+        d.setUTCMonth(dbits[1] - 1, dbits[2]);
         
         var tbits = ts.split(':');
         d.setUTCHours(tbits[0]);
