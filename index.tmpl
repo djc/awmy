@@ -162,6 +162,7 @@
             <input type="radio" name="repeat" id="repeat-never" value="" checked required><label for="repeat-never">Never</label>
             <input type="radio" name="repeat" id="repeat-w" value="w"><label for="repeat-w">Weekly</label>
             <input type="radio" name="repeat" id="repeat-b" value="b"><label for="repeat-b">Bi-weekly</label>
+            <input type="radio" name="repeat" id="repeat-t" value="t"><label for="repeat-t">Tri-weekly</label>
           </fieldset>
           
           <label for="title-field" class="name">Title <span class="hint">(optional)</span></label>
@@ -596,6 +597,10 @@
           d = repeatDays(d, 14);
           next += 1;
           mode = 'b';
+        } else if (bits[next] == 't') {
+          d = repeatDays(d, 21);
+          next += 1;
+          mode = 't';
         } else {
           bits.splice(next, 0, null);
           next += 1;
@@ -610,6 +615,8 @@
           d = new Date(d.getTime() - (86400 * 7 * 1000));
         } else if (mode == 'b' && now.getTime() < (d.getTime() - (86400 * 14 * 1000))) {
           d = new Date(d.getTime() - (86400 * 14 * 1000));
+        } else if (mode == 't' && now.getTime() < (d.getTime() - (86400 * 21 * 1000))) {
+          d = new Date(d.getTime() - (86400 * 21 * 1000));
         }
         
         // Show results in document
@@ -669,7 +676,8 @@
         ];
         
         if (mode) {
-          var iCalRule = 'RRULE:FREQ=WEEKLY' + (mode == 'b' ? ';INTERVAL=2' : '');
+          var iCalInterval = {'w': '', 'b': ';INTERVAL=2', 't': ';INTERVAL=3'}
+          var iCalRule = 'RRULE:FREQ=WEEKLY' + iCalInterval[mode];
           iCalLines.splice(6, 0, iCalRule);
         }
         
@@ -685,7 +693,7 @@
         document.getElementById('timezone').setAttribute('value', stringFromUrlPath(bits[0]));
         document.getElementById('date').setAttribute('value', bits[1]);
         document.getElementById('time').setAttribute('value', (bits[2].length < 5 ? '0' : '') + bits[2]);
-        if (bits.length === 5 && /^[wb]$/.test(bits[3])) {
+        if (bits.length === 5 && /^[wbt]$/.test(bits[3])) {
           document.getElementById('repeat-' + bits[3]).checked = true;
         }
         document.getElementById('title-field').setAttribute('value', title);
