@@ -5,7 +5,7 @@ LITERALS = {'only', 'max'}
 def minimize(full, year):
 	
 	new = {}, {}
-	for rule, data in full['rules'].iteritems():
+	for rule, data in full['rules'].items():
 		for part in data:
 			
 			if part[1] not in LITERALS and int(part[1]) < year:
@@ -15,7 +15,7 @@ def minimize(full, year):
 			
 			new[1].setdefault(rule, []).append(part)
 	
-	for zone, data in full['zones'].iteritems():
+	for zone, data in full['zones'].items():
 		for part in data:
 			
 			if part['u'] and int(part['u'][0]) < year:
@@ -33,4 +33,4 @@ if __name__ == '__main__':
 		full = json.load(f)
 	
 	pruned = minimize(full, 2013)
-	print json.dumps(pruned)
+	print(json.dumps(pruned))

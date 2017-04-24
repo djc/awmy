@@ -11,18 +11,19 @@ WS_SPLIT = re.compile("[ \t]+")
 def lines(fn):
 	
 	with tarfile.open(fn, 'r:*') as tar:
-	    for info in tar:
+		for info in tar:
 			
 			if not info.isfile() or info.name not in FILES:
 				continue
 			
 			f = tar.extractfile(info)
 			for ln in f:
+				ln = ln.decode('iso-8859-1')
 				ln = ln.rstrip()
 				ln = ln.split('#', 1)[0]
 				ln = ln.rstrip(' \t')
 				if ln:
-					yield ln.decode('iso-8859-1')
+					yield ln
 			
 			f.close()
 
@@ -84,4 +85,4 @@ if __name__ == '__main__':
 	if version is None:
 		raise StandardError('argument must be tzdata archive')
 	
-	print json.dumps(parse(path))
+	print(json.dumps(parse(path)))

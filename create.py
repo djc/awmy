@@ -8,7 +8,7 @@ if __name__ == '__main__':
 	with open('index.tmpl') as f:
 		tmpl = f.read()
 	
-	for k, v in data.iteritems():
+	for k, v in data.items():
 		tmpl = tmpl.replace('{{ %s }}' % k, json.dumps(v))
 	
-	print tmpl
+	print(tmpl)
