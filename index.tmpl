@@ -23,9 +23,13 @@
         width: 850px;
       }
       
-      h1 {
+      #title {
         text-align: center;
         font-size: 1.8em;
+      }
+
+      #url {
+        font-size: 0.8em;
       }
       
       p {
@@ -90,6 +94,10 @@
         padding-left: 1px;
         padding-bottom: 5px;
       }
+
+      .optional {
+        display: none;
+      }
       
       footer p {
         font-weight: normal;
@@ -126,7 +134,8 @@
   <body>
     
     <div id="wrap">
-      <h1></h1>
+      <h1 id="title" class="optional"></h1>
+      <a id="url" class="optional" href="#">Join this meeting</a>
       <p id="local">
         <span id="your" class="label">Your time:</span>
         <span class="val"></span>
@@ -167,6 +176,9 @@
           
           <label for="title-field" class="name">Title <span class="hint">(optional)</span></label>
           <input type="text" name="title" id="title-field" size="30" placeholder="My awesome meeting">
+
+          <label for="url-field" class="name">Meeting URL<span class="hint">(optional)</span></label>
+          <input type="text" name="url" id="url-field" size="30" placeholder="https://example.com/mymeeting">
           
           <input type="submit" value="Go to URL for new meeting">
           
@@ -539,8 +551,9 @@
       }
       
       function showInfo(url) {
+        var urlparts = parseURL(url);
         
-        var bits = parseURL(url).path.split('/');
+        var bits = urlparts.path.split('/');
         bits.shift();
         if (bits.length > 1) {
           document.querySelector('a.edit').textContent = 'Use as template';
@@ -605,7 +618,17 @@
           bits.splice(next, 0, null);
           next += 1;
         }
-        
+
+        // Decode extradata
+        var extra = null;
+        if (urlparts.hash) {
+          try {
+            extra = JSON.parse(atob(urlparts.hash));
+          } catch (e) {
+            extra = null;
+          }
+        }
+
         // Apply necessary offset
         
         var offset = zoneOffset(bits[0], d);
@@ -644,9 +667,16 @@
         
         var title = decodeURIComponent(bits.slice(next).join('/'));
         if (title != 'undefined') {
-          document.querySelector('h1').textContent = title;
-          document.querySelector('h1').style.display = 'block';
+          document.getElementById('title').textContent = title;
+          document.getElementById('title').style.display = 'block';
           document.title = title + ' - Are we meeting yet?';
+        }
+        var meetingurl = extra && extra.url;
+        if (meetingurl && meetingurl.startsWith("http")) {
+          document.getElementById('url').setAttribute('href', meetingurl);
+          document.getElementById('url').style.display = 'block';
+        } else {
+          document.getElementById('url').style.display = '';
         }
         
         // Build iCal event
@@ -671,9 +701,10 @@
           'DTSTAMP:' + iCalDate(new Date()) + 'Z',
           'DTSTART' + iCalStart,
           'SUMMARY:' + title,
+          meetingurl ? 'ATTACH:' + meetingurl : "",
           'END:VEVENT',
           'END:VCALENDAR'
-        ];
+        ].filter(Boolean);
         
         if (mode) {
           var iCalInterval = {'w': '', 'b': ';INTERVAL=2', 't': ';INTERVAL=3'}
@@ -697,6 +728,8 @@
           document.getElementById('repeat-' + bits[3]).checked = true;
         }
         document.getElementById('title-field').setAttribute('value', title);
+
+        document.getElementById('url-field').setAttribute('value', meetingurl || "");
         
         // Warn about data which is only valid in repeating mode
         
@@ -710,6 +743,11 @@
       }
       
       showInfo(document.location);
+
+      window.addEventListener("hashchange", function() {
+        showInfo(document.location);
+      });
+
       (function($) {
         'use strict';
 
@@ -760,6 +798,16 @@
             .join('/')
             // replace %3A with ':' (%3A not handled)
             .replace(/%3A/g, ':');
+
+          // optional extra params that make the url ugly
+          var extra = {};
+          if (form.elements.url.value) {
+            extra.url = form.elements.url.value;
+          }
+
+          if (Object.keys(extra).length) {
+            URL += "#" + btoa(JSON.stringify(extra));
+          }
           
           // goto URL
           location.href = URL;
