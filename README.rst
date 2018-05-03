@@ -13,12 +13,16 @@ Requirements
 How to install
 --------------
 
-Refer to the ``Makefile`` for further instructions. The ``source.json``
-``Makefile`` target is currently Gentoo-specific; you can trivially generate
-``source.json`` by passing an explicit path to the tzdata tarball to
-``zones.py``.
+Simply run ``make``, which will retrieve the latest timezone information and
+build the templates. On gentoo, it will use the latest installed timezone data
+from ``/usr/portage/distfiles/tzdata20*``, on other systems it will download the
+latest timezone information from ftp.iana.org. If you are not on gentoo, you
+have to manually delete tzdata-latest.tar.gz and re-run ``make`` to update
+timezones.
 
 The JavaScript code currently assumes installation at a host root and
 redirection of all requests for that host to ``index.html``. On Apache, this
 can be achieved by employing the ``FallbackResource`` directive (consider
 also enabling ``AllowEncodedSlashes`` for your virtual host).
+
+To test locally, run ``make serve`` to spin up a simple http server on port 8000.
