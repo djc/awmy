@@ -714,11 +714,13 @@
         'use strict';
 
         // add timezones
-        var options = document.getElementById('tz').innerHTML;
+        var options = document.getElementById('tz');
         Object.keys(ZONES).sort().forEach(function(key) {
-          options += '<option>' + key + '</option>';
+          let textContent = document.createTextNode(key);
+          let node = document.createElement('option');
+          node.appendChild(textContent);
+          options.appendChild(node);
         });
-        document.getElementById('tz').innerHTML = options;
 
         // create URL when form submitted
         document.querySelector('form').addEventListener('submit', function(event) {
