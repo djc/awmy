@@ -1,3 +1,4 @@
 *.json
 *.pyc
 index.html
+tzdata-latest.tar.gz
