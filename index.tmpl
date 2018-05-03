@@ -267,7 +267,7 @@
       
       function refresh(d) {
         var relString = relTime(new Date(), d);
-        document.querySelector('span#delta').innerHTML = '(' + relString + ')';
+        document.querySelector('span#delta').textContent = '(' + relString + ')';
       }
       
       var DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -543,7 +543,7 @@
         var bits = parseURL(url).path.split('/');
         bits.shift();
         if (bits.length > 1) {
-          document.querySelector('a.edit').innerHTML = 'Use as template';
+          document.querySelector('a.edit').textContent = 'Use as template';
         } else {
           document.querySelector('section').removeAttribute('hidden');
           document.location = '#form';
@@ -623,28 +623,28 @@
         
         var para = document.querySelector('p#local');
         var local = format(d, -d.getTimezoneOffset());
-        para.querySelector('span.val').innerHTML = local[0];
+        para.querySelector('span.val').textContent = local[0];
         var label = para.querySelector('span#your');
         if (mode) {
-          label.innerHTML = 'Next occurrence, your time (UTC ' + local[1] + '):';
+          label.textContent = 'Next occurrence, your time (UTC ' + local[1] + '):';
         } else {
-          label.innerHTML = 'Your time (UTC ' + local[1] + '):';
+          label.textContent = 'Your time (UTC ' + local[1] + '):';
         }
         para.style.display = 'block';
         
         var ref = format(d, offset / 60);
-        document.querySelector('p#ref span.val').innerHTML = ref[0];
+        document.querySelector('p#ref span.val').textContent = ref[0];
         if (bits[0] == 'UTC') {
           var text = '(in UTC)';
         } else {
           text = '(in timezone ' + bits[0].replace('_', ' ') + ', UTC ' + ref[1] + ')';
         }
-        document.querySelector('p#ref span#zone').innerHTML = text;
+        document.querySelector('p#ref span#zone').textContent = text;
         document.querySelector('p#ref').style.display = 'block';
         
         var title = decodeURIComponent(bits.slice(next).join('/'));
         if (title != 'undefined') {
-          document.querySelector('h1').innerHTML = title;
+          document.querySelector('h1').textContent = title;
           document.querySelector('h1').style.display = 'block';
           document.title = title + ' - Are we meeting yet?';
         }
