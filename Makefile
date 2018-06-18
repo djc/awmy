@@ -9,7 +9,6 @@ pruned.json: source.json prune.py
 	@python prune.py source.json > pruned.json
 
 source.json: zones.py $(TZDATA_LATEST)
-	@echo Using $(TZDATA_LATEST)
 	@python zones.py $(TZDATA_LATEST) > $@
 
 tzdata-latest.tar.gz:
