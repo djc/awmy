@@ -521,10 +521,17 @@
         
       }
       
-      function repeatDays(d, n) {
-        var diff = d.getTime() - (new Date()).getTime();
+      function repeatDays(d, n, zone) {
+        var now = new Date();
+        var offset = zoneOffset(zone, now);
+        var zonedNow = now.getTime() + offset * 1000;
+
+        // Time in repeat units from current time to scheduled time
+        // (If < 0, need to jump forwards; > 1, then jump backwards.)
         var unit = 86400 * n * 1000;
-        var move = (diff < 0 || diff > 1) ? -Math.floor(diff / unit) : 0;
+        var diff = (d.getTime() - zonedNow) / unit;
+        console.log("DIFF: " + (d.getTime() - zonedNow) / 3600000 + " in units: " + unit);
+        var move = (diff < 0 || diff > 1) ? -Math.floor(diff) : 0;
         return new Date(d.getTime() + move * unit);
       }
       
@@ -603,15 +610,15 @@
         var mode = null;
         next += 2;
         if (bits[next] == 'w') {
-          d = repeatDays(d, 7);
+          d = repeatDays(d, 7, bits[0]);
           next += 1;
           mode = 'w';
         } else if (bits[next] == 'b') {
-          d = repeatDays(d, 14);
+          d = repeatDays(d, 14, bits[0]);
           next += 1;
           mode = 'b';
         } else if (bits[next] == 't') {
-          d = repeatDays(d, 21);
+          d = repeatDays(d, 21, bits[0]);
           next += 1;
           mode = 't';
         } else {
@@ -633,14 +640,6 @@
         
         var offset = zoneOffset(bits[0], d);
         d = new Date(d.getTime() - offset * 1000);
-        var now = new Date();
-        if (mode == 'w' && now.getTime() < (d.getTime() - (86400 * 7 * 1000))) {
-          d = new Date(d.getTime() - (86400 * 7 * 1000));
-        } else if (mode == 'b' && now.getTime() < (d.getTime() - (86400 * 14 * 1000))) {
-          d = new Date(d.getTime() - (86400 * 14 * 1000));
-        } else if (mode == 't' && now.getTime() < (d.getTime() - (86400 * 21 * 1000))) {
-          d = new Date(d.getTime() - (86400 * 21 * 1000));
-        }
         
         // Show results in document
         
