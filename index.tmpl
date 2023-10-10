@@ -4,7 +4,7 @@
     <title>Are we meeting yet?</title>
     <meta charset="utf-8">
     <style>
-      
+
       body {
         text-align: center;
         font-family: -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
@@ -15,14 +15,14 @@
         color: #333;
         padding: 2em;
       }
-      
+
       div#wrap {
         overflow: auto;
         margin: 0px auto;
         text-align: center;
         width: 850px;
       }
-      
+
       #title {
         text-align: center;
         font-size: 1.8em;
@@ -31,17 +31,17 @@
       #url {
         font-size: 0.8em;
       }
-      
+
       p {
         margin: 30px;
         margin-top: 30px;
       }
-      
+
       p#local, p#ref {
         display: none;
         text-align: center;
       }
-      
+
       span.label {
         display: block;
         color: #aaa;
@@ -50,7 +50,7 @@
         font-size: 0.7em;
         margin: 10px;
       }
-      
+
       section {
         clear: both;
         display: block;
@@ -59,37 +59,37 @@
         margin: 4em auto 0em auto;
         width: 450px;
       }
-      
+
       section[hidden] {
         display: none;
       }
-      
+
       form {
         text-align: left;
       }
-      
+
       input {
         font: inherit;
         padding: .3em .5em;
       }
-      
+
       label,
       fieldset,
       input[type="submit"] {
         display: block;
         margin: 1em 0 0;
       }
-      
+
       fieldset {
         border: none;
         padding: 0;
       }
-      
+
       fieldset > label {
         display: inline;
         padding-right: .7em;
       }
-      
+
       label.name, legend.name {
         padding-left: 1px;
         padding-bottom: 5px;
@@ -106,33 +106,33 @@
         margin-top: 80px;
         text-align: center;
       }
-      
+
       a {
         text-decoration: none;
         color: #99f;
       }
-      
+
       a.edit {
         cursor: pointer;
       }
-      
+
       a:hover, a:active {
         color: #f99;
       }
-      
+
       span.hint {
         color: #aaa;
       }
-      
+
       p.narrow {
         margin: 0;
         width: 450px;
       }
-      
+
     </style>
   </head>
   <body>
-    
+
     <div id="wrap">
       <h1 id="title" class="optional"></h1>
       <a id="url" class="optional" href="#">Join this meeting</a>
@@ -146,26 +146,26 @@
         <span class="val"></span>
         <span id="zone" class="label"></span>
       </p>
-      
+
       <section hidden>
         <h1>Build new meeting link</h1>
         <form id="form" action="/" method="get">
-          
+
           <p class="narrow">
             Enter your meeting details to build a new URL. Click the button
             at the bottom of the form to go there, then send the address
             of that page to other meeting participants.
           </p>
-          
+
           <label for="timezone" class="name">Timezone <span class="hint">(reference/stable timezone for your meeting)</span></label>
           <input type="text" name="timezone" id="timezone" size="30" list="tz" placeholder="Continent/Timezone" required>
-          
+
           <label for="date" class="name">Date</label>
           <input type="date" name="date" id="date" size="20" placeholder="YYYY-MM-DD" pattern="[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])" required>
 
           <label for="time" class="name">Time</label>
           <input type="time" id="time" size="20" placeholder="HH:MM" pattern="[012][0-9]:[0-5][0-9]" required>
-          
+
           <fieldset>
             <legend class="name">Repeat?</legend>
             <input type="radio" name="repeat" id="repeat-never" value="" checked required><label for="repeat-never">Never</label>
@@ -173,22 +173,22 @@
             <input type="radio" name="repeat" id="repeat-b" value="b"><label for="repeat-b">Bi-weekly</label>
             <input type="radio" name="repeat" id="repeat-t" value="t"><label for="repeat-t">Tri-weekly</label>
           </fieldset>
-          
+
           <label for="title-field" class="name">Title <span class="hint">(optional)</span></label>
           <input type="text" name="title" id="title-field" size="30" placeholder="My awesome meeting">
 
           <label for="url-field" class="name">Meeting URL<span class="hint">(optional)</span></label>
           <input type="text" name="url" id="url-field" size="30" placeholder="https://example.com/mymeeting">
-          
+
           <input type="submit" value="Go to URL for new meeting">
-          
+
         </form>
 
         <datalist id="tz">
           <option>UTC</option>
         </datalist>
       </section>
-      
+
       <footer>
         <p>
           <a class="edit">Use as template</a> |
@@ -196,16 +196,16 @@
           <a href="https://github.com/djc/awmy/">Feedback welcome</a>
         </p>
       </footer>
-      
+
     </div>
-    
+
     <script>
-      
+
       var ZONES = {{ zones }};
       var RULES = {{ rules }};
-      
+
       function parseURL(url) {
-        
+
         var a =  document.createElement('a');
         a.href = url;
         return {
@@ -230,10 +230,10 @@
           relative: (a.href.match(/tps ? : \/\/[^\/]+(.+)/) || [, ''])[1],
           segments: a.pathname.replace(/^\//, '').split('/')
         };
-        
-        
+
+
       }
-      
+
       function pad(x) {
         if (x >= 0) {
           return x < 10 ? '0' + x : x.toString();
@@ -243,7 +243,7 @@
       }
 
       var scales = {
-        'year': 365 * 24 * 60 * 60,   
+        'year': 365 * 24 * 60 * 60,
         'month': 30 * 24 * 60 * 60,
         'week': 7 * 24 * 60 * 60,
         'day': 24 * 60 * 60,
@@ -251,14 +251,14 @@
         'minute': 60,
         'second': 1
       };
-  
+
       function relTime(x, y) {
-        
+
         var delta = Math.floor((y.getTime() - x.getTime()) / 1000);
         if (delta < 0) {
           return 'in the past';
         }
-        
+
         for (unit in scales) {
           var s = scales[unit];
           var n = delta / s;
@@ -274,22 +274,22 @@
             return str + ' from now';
           }
         }
-        
+
       }
-      
+
       function refresh(d) {
         var relString = relTime(new Date(), d);
         document.querySelector('span#delta').textContent = '(' + relString + ')';
       }
-      
+
       var DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
       var MONTHS = [
         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
       ];
-      
+
       function format(d, offset) {
-        
+
         d = new Date(d.getTime() + offset * 60 * 1000);
 	    var wd = d.getUTCDay();
         var dn = d.getUTCDate();
@@ -298,7 +298,7 @@
         var H = d.getUTCHours();
         var M = d.getUTCMinutes();
         var S = d.getUTCSeconds();
-        
+
         var dstr = dn.toString();
         var last = parseInt(dstr.substr(dstr.length - 1, 1), 10);
         if (parseInt(dstr, 10) >= 7 && parseInt(dstr, 10) < 20) {
@@ -312,51 +312,51 @@
         } else {
           suffix = 'th';
         }
-        
+
         var ds = DAYS[wd] + ', ' + dn + suffix + ' ' + MONTHS[m] + ', ';
         var ts = pad(H) + ':' + pad(M);
-        
+
         var zone = '';
         if (offset) {
           var delta = pad(offset / 60) + ':' + pad(offset % 60);
           zone = (offset > 0 ? '+' : '') + delta;
           zone = zone.substr(0, 1) + ' ' + zone.substr(1);
         }
-        
+
         return [ds + ts, zone];
-        
+
       }
-      
+
       function digit(s) {
         var c = s.charCodeAt(0);
         return (c > 47) && (c < 58);
       }
-      
+
       function capitalize(s) {
         return s.substr(0, 1).toUpperCase() + s.substr(1).toLowerCase();
       }
-      
+
       function procLiteral(ds, ts) {
-        
+
         var dbits = ds.split('-');
         var d = new Date();
         d.setUTCFullYear(dbits[0]);
         d.setUTCMonth(dbits[1] - 1, dbits[2]);
-        
+
         var tbits = ts.split(':');
         d.setUTCHours(tbits[0]);
         d.setUTCMinutes(tbits[1]);
         d.setUTCSeconds(0);
-        
+
         return d;
-        
+
       }
-      
+
       function procWeekly(bits) {
-        
+
         var day = bits[0].length > 3 ? bits[0].substr(1) : bits[0];
         var idx = DAYS.indexOf(capitalize(day));
-        
+
         var now = new Date(Date.now());
         now.setUTCSeconds(0);
         var t = pad(now.getUTCHours()) + ':' + pad(now.getUTCMinutes());
@@ -365,21 +365,21 @@
           diff = diff <= 0 ? diff + 7 : diff;
           now = new Date(now.getTime() + diff * 24 * 60 * 60 * 1000);
         }
-        
+
         var tbits = bits[1].split(':');
         now.setUTCHours(tbits[0]);
         now.setUTCMinutes(tbits[1]);
         return now;
-        
+
       }
-      
+
       var PARTS = ["Europe", "Australia", "Africa", "Asia", "Antarctica", "Indian", "Atlantic", "Pacific", "America"];
       var LOCAL = {};
       for (var key in ZONES) {
         var local = key.split('/')[1];
         LOCAL[local.toLowerCase()] = key;
       }
-      
+
       function canonicalZone(zone) {
         if (zone === 'UTC') return zone;
         zone = zone.replace(' ', '_');
@@ -389,39 +389,39 @@
         }
         return zone;
       }
-      
+
       function zoneOffset(zone, d) {
-        
+
         if (zone == 'UTC') {
           return 0;
         }
-        
+
         var active = ZONES[zone][ZONES[zone].length - 1];
         var zoneoff = active.o;
         console.log('ZONE-OFFSET: ' + zoneoff);
         d = new Date(d.getTime() - zoneoff * 1000);
-        
+
         var changes = [];
         var y = d.getUTCFullYear();
         var dstoff = 0;
         for (var i in RULES[active.r]) {
-          
+
           console.log('RULE: ' + JSON.stringify(RULES[active.r][i]));
           var rule = RULES[active.r][i];
           if (parseInt(rule[0], 10) > y) {
             continue;
           }
-          
+
           if (rule[1] != 'max' && parseInt(rule[1], 10) < y) {
             continue;
           }
-          
+
           if (rule[2] != '-') {
             alert('This code has not been tested! (year-type)');
           }
-          
+
           // Months handling
-          
+
           var rm = MONTHS.indexOf(rule[3]) + 1;
           var m = d.getUTCMonth() + 1;
           console.log('COMPARE: ' + m + ' ~ ' + rm);
@@ -432,9 +432,9 @@
             console.log('DST-OFFSET: ' + dstoff);
             continue;
           }
-          
+
           // Find the transition day
-          
+
           var cur = new Date(Date.UTC(y, m - 1, 1, 0, 0));
           console.log('FIRST: ' + cur);
           var wd = cur.getUTCDay();
@@ -446,23 +446,23 @@
             idx = parseInt(parts[1], 10);
             target = DAYS.indexOf(parts[0]);
           }
-          
+
           console.log('IDX: ' + idx + ' TARGET: ' + target);
           if (wd != target) {
             cur = new Date(cur.getTime() + 86400 * (7 - wd) * 1000);
           }
-          
+
           console.log('MOVED-DAY: ' + cur);
           while (cur.getUTCMonth() == m - 1 && cur.getUTCDate() < idx) {
             cur = new Date(cur.getTime() + 86400 * 7 * 1000);
             console.log('LOOPED: ' + cur);
           }
-          
+
           if (cur.getUTCMonth() == m) {
             cur = new Date(cur.getTime() - 86400 * 7 * 1000);
             console.log('WOUND-BACK: ' + cur);
           }
-          
+
           console.log('TRANS-DAY: ' + cur);
           console.log('COMPARE-DAYS: ' + d.getUTCDate() + ' ~ ' + cur.getUTCDate());
           if (d.getUTCDate() < cur.getUTCDate()) {
@@ -472,9 +472,9 @@
             console.log('DST-OFFSET: ' + dstoff);
             continue;
           }
-          
+
           // Find the transition time
-          
+
           var ttime = rule[5];
           console.log('FLOO: ' + ttime.charAt(ttime.length - 1));
           if (['w', 'u', 's'].indexOf(ttime.charAt(ttime.length - 1)) >= 0) {
@@ -483,7 +483,7 @@
           } else {
             type = 'w';
           }
-          
+
           console.log('TIME-TYPE: ' + ttime + ' ' + type);
           parts = ttime.split(':');
           var sdiff = parseInt(parts[0], 10) * 3600;
@@ -493,7 +493,7 @@
               sdiff += parseInt(parts[2], 10) * 60;
             }
           }
-          
+
           if (type == 'u') {
             cur = new Date(cur.getTime() + sdiff * 1000);
           } else if (type == 's') {
@@ -501,7 +501,7 @@
           } else {
             cur = new Date(cur.getTime() + (sdiff - zoneoff - dstoff) * 1000);
           }
-          
+
           console.log('TRANS-TIME: ' + cur);
           console.log('MEETING-TIME: ' + d);
           if (d.getTime() < cur.getTime()) {
@@ -511,16 +511,16 @@
             console.log('DST-OFFSET: ' + dstoff);
             continue;
           }
-          
+
           // Still moderately fucked up at transition time
           // Particularly when transition is forward?
-          
+
         }
-        
+
         return zoneoff + dstoff;
-        
+
       }
-      
+
       function repeatDays(d, n, zone) {
         var now = new Date();
         var offset = zoneOffset(zone, now);
@@ -534,11 +534,11 @@
         var move = (diff < 0 || diff > 1) ? -Math.floor(diff) : 0;
         return new Date(d.getTime() + move * unit);
       }
-      
+
       function oldWeek(x) {
         return x.charAt(0) == 'W' && x.length == 4 && x[0] != 'Wake';
       }
-      
+
       function newWeek(x) {
         return DAYS.indexOf(capitalize(x)) >= 0;
       }
@@ -546,7 +546,7 @@
       function stringFromUrlPath(path) {
         return path.replace(/(%20|_)+/g, ' ');
       }
-      
+
       function hashString(s) {
         var hash = 0;
         if (s.length == 0) return hash;
@@ -556,10 +556,10 @@
         }
         return Math.abs(hash).toString(32);
       }
-      
+
       function showInfo(url) {
         var urlparts = parseURL(url);
-        
+
         var bits = urlparts.path.split('/');
         bits.shift();
         if (bits.length > 1) {
@@ -569,9 +569,9 @@
           document.location = '#form';
           return;
         }
-        
+
         // Extract data from URL
-        
+
         var restrict = null;
 		if (newWeek(bits[0])) {
 		  bits = ['UTC'].concat(bits);
@@ -591,9 +591,9 @@
         }
 
         console.log('BITS', JSON.stringify(bits));
-        
+
         // Calculate date value from URL data
-        
+
         var next = 1;
         if (newWeek(bits[next])) {
           var ds = procWeekly(bits.slice(next, next + 2)).toISOString().substr(0, 10);
@@ -602,11 +602,11 @@
         } else {
           d = procLiteral(bits[next], bits[next + 1]);
         }
-        
+
         console.log('DATE', d);
-        
+
         // Apply repetitions to get future date
-        
+
         var mode = null;
         next += 2;
         if (bits[next] == 'w') {
@@ -637,12 +637,12 @@
         }
 
         // Apply necessary offset
-        
+
         var offset = zoneOffset(bits[0], d);
         d = new Date(d.getTime() - offset * 1000);
-        
+
         // Show results in document
-        
+
         var para = document.querySelector('p#local');
         var local = format(d, -d.getTimezoneOffset());
         para.querySelector('span.val').textContent = local[0];
@@ -653,7 +653,7 @@
           label.textContent = 'Your time (UTC ' + local[1] + '):';
         }
         para.style.display = 'block';
-        
+
         var ref = format(d, offset / 60);
         document.querySelector('p#ref span.val').textContent = ref[0];
         if (bits[0] == 'UTC') {
@@ -663,7 +663,7 @@
         }
         document.querySelector('p#ref span#zone').textContent = text;
         document.querySelector('p#ref').style.display = 'block';
-        
+
         var title = decodeURIComponent(bits.slice(next).join('/'));
         if (title != 'undefined') {
           document.getElementById('title').textContent = title;
@@ -677,20 +677,20 @@
         } else {
           document.getElementById('url').style.display = '';
         }
-        
+
         // Build iCal event
-        
+
         function iCalDate(d) {
           return d.toISOString().replace(/[-:]+/g, '').substr(0, 15);
         }
-        
+
         var specDate = new Date(d.getTime() + offset * 1000);
         if (bits[0] === 'UTC') {
            var iCalStart = ':' + iCalDate(specDate) + 'Z';
         } else {
            iCalStart = ';TZID=' + bits[0] + ':' + iCalDate(specDate);
         }
-        
+
         var iCalLines = [
           'BEGIN:VCALENDAR',
           'VERSION:2.0',
@@ -704,20 +704,20 @@
           'END:VEVENT',
           'END:VCALENDAR'
         ].filter(Boolean);
-        
+
         if (mode) {
           var iCalInterval = {'w': '', 'b': ';INTERVAL=2', 't': ';INTERVAL=3'}
           var iCalRule = 'RRULE:FREQ=WEEKLY' + iCalInterval[mode];
           iCalLines.splice(6, 0, iCalRule);
         }
-        
+
         var iCalData = iCalLines.join('\r\n') + '\r\n';
         var iCalLink = document.getElementById('ical');
         iCalLink.href = 'data:text/calendar;base64,' + btoa(iCalData);
         iCalLink.title = "iCalendar event for '" + title + "'";
-        
+
         // Set values in form for editing
-        
+
         bits = parseURL(url).path.split('/');
         bits.shift();
         document.getElementById('timezone').setAttribute('value', stringFromUrlPath(bits[0]));
@@ -729,18 +729,18 @@
         document.getElementById('title-field').setAttribute('value', title);
 
         document.getElementById('url-field').setAttribute('value', meetingurl || "");
-        
+
         // Warn about data which is only valid in repeating mode
-        
+
         if (restrict && mode !== restrict) {
           alert('Weekdays are only valid for weekly repeating.');
         }
-        
+
         refresh(d);
         window.setInterval(refresh, 100, d);
-        
+
       }
-      
+
       showInfo(document.location);
 
       window.addEventListener("hashchange", function() {
@@ -761,7 +761,7 @@
 
         // create URL when form submitted
         document.querySelector('form').addEventListener('submit', function(event) {
-          
+
           event.preventDefault();
           // construct URL
           var form = this,
@@ -774,7 +774,7 @@
           }).filter(function(value) {
             return !!value;
           });
-          
+
           var repeat = '';
           for (var i in form.elements['repeat']) {
             var f = form.elements['repeat'][i];
@@ -783,16 +783,16 @@
               break;
             }
           }
-          
+
           if (repeat) {
             params.splice(3, 0, [repeat]);
           }
-          
+
           // keep the timezone, lose the continent
           params[0] = params[0].replace(/^.*\/(.*)$/, '$1');
           // replace spaces with underscore in timezone
           params[0] = params[0].replace('_', ' ');
-         
+
           // encode all params and append to URL
           URL += params
             .map(encodeURIComponent)
@@ -809,11 +809,11 @@
           if (Object.keys(extra).length) {
             URL += "#" + btoa(JSON.stringify(extra));
           }
-          
+
           // goto URL
           location.href = URL;
           return false;
-          
+
         });
 
         // hide form behind button
