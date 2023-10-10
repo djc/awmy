@@ -175,6 +175,7 @@
             <input type="radio" name="repeat" id="repeat-w" value="w"><label for="repeat-w">Weekly</label>
             <input type="radio" name="repeat" id="repeat-b" value="b"><label for="repeat-b">Bi-weekly</label>
             <input type="radio" name="repeat" id="repeat-t" value="t"><label for="repeat-t">Tri-weekly</label>
+            <input type="radio" name="repeat" id="repeat-q" value="q"><label for="repeat-q">Quad-weekly</label>
           </fieldset>
 
           <label for="title-field" class="name">Title <span class="hint">(optional)</span></label>
@@ -625,6 +626,10 @@
           d = repeatDays(d, 21, bits[0]);
           next += 1;
           mode = 't';
+        } else if (bits[next] == 'q') {
+          d = repeatDays(d, 28, bits[0]);
+          next += 1;
+          mode = 'q';
         } else {
           bits.splice(next, 0, null);
           next += 1;
@@ -710,7 +715,7 @@
         ].filter(Boolean);
 
         if (mode) {
-          var iCalInterval = {'w': '', 'b': ';INTERVAL=2', 't': ';INTERVAL=3'}
+          var iCalInterval = {'w': '', 'b': ';INTERVAL=2', 't': ';INTERVAL=3', 'q': ';INTERVAL=4'}
           var iCalRule = 'RRULE:FREQ=WEEKLY' + iCalInterval[mode];
           iCalLines.splice(6, 0, iCalRule);
         }
