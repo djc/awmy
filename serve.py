@@ -2,15 +2,12 @@
 
 import sys
 
-from SimpleHTTPServer import SimpleHTTPRequestHandler
-from BaseHTTPServer import HTTPServer
-
+from http.server import SimpleHTTPRequestHandler, HTTPServer
 
 class Handler(SimpleHTTPRequestHandler):
     def do_GET(self):
         self.path = 'index.html'
         return SimpleHTTPRequestHandler.do_GET(self)
-
 
 port = sys.argv[1] if len(sys.argv) > 1 else 8000
 httpd = HTTPServer(('0.0.0.0', port), Handler)
