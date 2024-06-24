@@ -81,7 +81,7 @@ def parse(fn):
 if __name__ == '__main__':
 	
 	path = sys.argv[1]
-	version = re.match('tzdata(.*)\.tar\.gz$', os.path.basename(path))
+	version = re.match(r'tzdata(.*)\.tar\.gz$', os.path.basename(path))
 	if version is None:
 		raise StandardError('argument must be tzdata archive')
 	
